@@ -1,0 +1,1657 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Immo-Quick-Check</title>
+<meta name="description" content="Quick-Check für Immobilien: Vermietung und Fix &amp; Flip mit Score, Ampel und Maximalgebot.">
+<meta name="theme-color" content="#eaf0ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#070d14" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Immo-Check">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+:root {
+  --bg: #eaf0ee;
+  --bg-glow-1: rgba(20, 184, 166, .22);
+  --bg-glow-2: rgba(99, 102, 241, .14);
+  --card: rgba(255, 255, 255, .72);
+  --card-solid: #ffffff;
+  --card-border: rgba(255, 255, 255, .9);
+  --text: #0f1f1c;
+  --muted: #52615d;
+  --line: rgba(15, 31, 28, .09);
+  --field: rgba(15, 31, 28, .05);
+  --field-focus: #ffffff;
+  --accent: #0f766e;
+  --accent-2: #0d9488;
+  --accent-grad: linear-gradient(135deg, #0f766e 0%, #0d9488 55%, #14b8a6 100%);
+  --accent-text: #ffffff;
+  --accent-soft: rgba(13, 148, 136, .12);
+  --chip: rgba(13, 148, 136, .12);
+  --chip-text: #0f5f58;
+  --own: #fff1c7;
+  --own-text: #5c4300;
+  --error: #b42318;
+  --gruen: #15803d;
+  --gelb: #eab308;
+  --rot: #dc2626;
+  --gruen-grad: linear-gradient(145deg, #16a34a, #0f766e);
+  --gelb-grad: linear-gradient(145deg, #fde047, #f59e0b);
+  --rot-grad: linear-gradient(145deg, #f87171, #dc2626);
+  --gruen-text: #ffffff;
+  --gelb-text: #1f1500;
+  --rot-text: #ffffff;
+  --bar-bg: rgba(15, 31, 28, .08);
+  --lvl-hi: linear-gradient(90deg, #14b8a6, #16a34a);
+  --lvl-mid: linear-gradient(90deg, #fbbf24, #f59e0b);
+  --lvl-lo: linear-gradient(90deg, #fb7185, #dc2626);
+  --shadow: 0 1px 2px rgba(15, 31, 28, .04), 0 8px 24px -8px rgba(15, 31, 28, .12);
+  --shadow-lg: 0 12px 32px -10px rgba(15, 118, 110, .45);
+  --header: rgba(234, 240, 238, .72);
+  --radius: 22px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #070d14;
+    --bg-glow-1: rgba(45, 212, 191, .16);
+    --bg-glow-2: rgba(99, 102, 241, .16);
+    --card: rgba(22, 32, 42, .66);
+    --card-solid: #131c26;
+    --card-border: rgba(255, 255, 255, .07);
+    --text: #e8f0ee;
+    --muted: #9fb0ad;
+    --line: rgba(255, 255, 255, .08);
+    --field: rgba(255, 255, 255, .06);
+    --field-focus: rgba(255, 255, 255, .1);
+    --accent: #2dd4bf;
+    --accent-2: #5eead4;
+    --accent-grad: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 60%, #5eead4 100%);
+    --accent-text: #04201c;
+    --accent-soft: rgba(45, 212, 191, .14);
+    --chip: rgba(45, 212, 191, .14);
+    --chip-text: #99f6e4;
+    --own: rgba(250, 204, 21, .16);
+    --own-text: #fde68a;
+    --error: #fca5a5;
+    --gruen-grad: linear-gradient(145deg, #34d399, #0d9488);
+    --gelb-grad: linear-gradient(145deg, #fde047, #f59e0b);
+    --rot-grad: linear-gradient(145deg, #fb7185, #e11d48);
+    --gruen-text: #03140f;
+    --gelb-text: #1f1500;
+    --rot-text: #1d0207;
+    --bar-bg: rgba(255, 255, 255, .08);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -12px rgba(0, 0, 0, .6);
+    --shadow-lg: 0 12px 32px -10px rgba(45, 212, 191, .35);
+    --header: rgba(7, 13, 20, .7);
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(900px 600px at 110% -10%, var(--bg-glow-1), transparent 60%),
+    radial-gradient(700px 500px at -20% 30%, var(--bg-glow-2), transparent 60%),
+    radial-gradient(800px 600px at 120% 90%, var(--bg-glow-1), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  font: 16px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  letter-spacing: -0.005em;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--accent); }
+.wrap { max-width: 560px; margin: 0 auto; padding: 0 16px; }
+
+/* Kopfzeile */
+header.top {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--header);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  padding-top: env(safe-area-inset-top);
+  border-bottom: 1px solid var(--line);
+}
+.toprow { display: flex; align-items: center; gap: 8px; padding: 12px 0 10px; }
+.toprow h1 { font-size: 17px; white-space: nowrap; min-width: 0; margin: 0; flex: 1; font-weight: 800; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+.logo { width: 32px; height: 32px; border-radius: 10px; background: var(--accent-grad); display: grid; place-items: center; box-shadow: var(--shadow-lg); flex: none; }
+.logo svg { width: 20px; height: 20px; }
+.btn {
+  min-height: 44px; padding: 0 16px; border-radius: 14px;
+  border: 1px solid var(--line); background: var(--card); cursor: pointer; font-weight: 600;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  transition: transform .12s ease, box-shadow .2s ease, background .2s;
+}
+.btn:active { transform: scale(.97); }
+.btn.primary { background: var(--accent-grad); color: var(--accent-text); border: 0; box-shadow: var(--shadow-lg); }
+.btn.small { min-height: 38px; padding: 0 12px; font-size: 14px; border-radius: 12px; }
+.btn.danger { color: var(--error); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--field); border-radius: 14px; padding: 4px; gap: 4px; }
+.seg button {
+  min-height: 40px; border: 0; border-radius: 11px; background: transparent; cursor: pointer; font-weight: 650; color: var(--muted);
+  transition: background .2s, color .2s, box-shadow .2s;
+}
+.seg button[aria-pressed="true"] { background: var(--accent-grad); color: var(--accent-text); box-shadow: var(--shadow-lg); }
+.field .seg button[aria-pressed="true"] { background: var(--card-solid); color: var(--text); box-shadow: var(--shadow); }
+.minibar {
+  display: flex; align-items: center; gap: 10px; padding: 10px 0 12px; min-height: 34px; font-size: 14px;
+}
+.minibar .badge { flex: none; }
+.minibar .txt { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
+.minibar a { flex: none; font-weight: 700; text-decoration: none; }
+
+/* Karten und Felder */
+section.card, details.card {
+  background: var(--card);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  backdrop-filter: saturate(160%) blur(18px);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  border: 1px solid var(--card-border); padding: 18px 16px 8px; margin: 16px 0;
+}
+.card h2, details.card > summary { font-size: 13px; margin: 0 0 14px; font-weight: 750; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+details.card > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; min-height: 32px; }
+details.card > summary::-webkit-details-marker { display: none; }
+details.card > summary::after { content: ""; margin-left: auto; width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform .2s; }
+details.card:not([open]) > summary::after { transform: rotate(-45deg); }
+details.card:not([open]) { padding-bottom: 12px; }
+details.card:not([open]) > summary { margin-bottom: 0; }
+.sub { font-size: 13px; color: var(--muted); font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+.field { margin: 0 0 14px; min-width: 0; }
+.field label, .field .lbl { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 650; margin-bottom: 6px; flex-wrap: wrap; }
+.req { color: var(--error); font-weight: 700; }
+.inputrow {
+  display: flex; align-items: stretch; border: 1.5px solid transparent; border-radius: 14px; background: var(--field); overflow: hidden;
+  transition: background .2s, border-color .2s, box-shadow .2s;
+}
+.inputrow:focus-within { background: var(--field-focus); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.inputrow input, .inputrow select {
+  flex: 1; min-width: 0; min-height: 48px; border: 0; background: transparent; padding: 0 14px; font-size: 17px; font-weight: 550; outline: none;
+  font-variant-numeric: tabular-nums;
+  -webkit-appearance: none; appearance: none;
+}
+.inputrow select { padding-right: 32px; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 22px, calc(100% - 13px) 22px; background-size: 5px 5px; background-repeat: no-repeat; }
+.inputrow select option { background: var(--card-solid); color: var(--text); }
+.unit { display: flex; align-items: center; padding: 0 14px 0 4px; color: var(--muted); font-size: 14px; font-weight: 500; white-space: nowrap; }
+.field.is-std .inputrow input { color: var(--muted); font-weight: 450; }
+.field.has-error .inputrow { border-color: var(--error); }
+.hint { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; }
+.meta .hint { margin-top: 0; }
+.meta .tag:not(:empty) { margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; }
+.meta:has(.tag:empty):has(.hint:empty) { display: none; }
+.meta .tag:not(:empty) + .hint:not(:empty) { margin-top: 6px; }
+.err { font-size: 13px; color: var(--error); margin-top: 4px; font-weight: 600; }
+.err:empty { display: none; }
+.chip { display: inline-block; white-space: nowrap; font-size: 10.5px; font-weight: 750; letter-spacing: .05em; padding: 3px 8px; border-radius: 999px; background: var(--chip); color: var(--chip-text); text-transform: uppercase; }
+.chip.own { background: var(--own); color: var(--own-text); }
+.reset { border: 0; background: none; color: var(--accent); font-size: 13px; font-weight: 700; cursor: pointer; padding: 4px 2px; min-height: 28px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 12px; }
+.grid2 > .field.wide { grid-column: 1 / -1; }
+.check {
+  display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 12px; margin-bottom: 8px; font-size: 15px; cursor: pointer;
+  background: var(--field); border-radius: 14px; font-weight: 550;
+}
+.check input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--accent); flex: none; }
+.static { font-size: 15px; padding: 10px 14px; background: var(--field); border-radius: 14px; margin-bottom: 4px; }
+
+/* Ergebnis */
+.score { display: flex; gap: 16px; align-items: center; }
+.scorebox {
+  flex: none; width: 104px; height: 104px; border-radius: 28px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800;
+  position: relative;
+}
+.scorebox::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 1px 0 rgba(255,255,255,.35); pointer-events: none; }
+.scorebox .num { font-size: 48px; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
+.scorebox .of { font-size: 11px; font-weight: 700; opacity: .85; text-transform: uppercase; letter-spacing: .08em; margin-top: 2px; }
+.a-gruen { background: var(--gruen-grad); color: var(--gruen-text); }
+.a-gelb { background: var(--gelb-grad); color: var(--gelb-text); }
+.a-rot { background: var(--rot-grad); color: var(--rot-text); }
+.scorebox.a-gruen { box-shadow: 0 14px 30px -12px rgba(22, 163, 74, .6); }
+.scorebox.a-gelb { box-shadow: 0 14px 30px -12px rgba(245, 158, 11, .6); }
+.scorebox.a-rot { box-shadow: 0 14px 30px -12px rgba(220, 38, 38, .6); }
+.ampeltext { font-size: 21px; font-weight: 800; margin: 0 0 4px; letter-spacing: -0.02em; line-height: 1.2; }
+.begruendung { margin: 0; font-size: 15px; color: var(--muted); }
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-weight: 750; font-size: 13px; }
+.ko { margin: 14px 0 0; padding: 10px 12px; border-radius: 14px; background: var(--field); font-size: 14px; }
+.ko li { margin-left: 18px; }
+.ko ul { margin: 0; padding: 0; }
+
+.krit { margin: 0 0 14px; }
+.krit .row { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
+.krit .row b { font-weight: 650; }
+.krit .row span { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bar { height: 8px; background: var(--bar-bg); border-radius: 99px; overflow: hidden; margin: 6px 0 4px; }
+.bar > i { display: block; height: 100%; border-radius: 99px; background: var(--accent-grad); transition: width .35s ease; }
+.bar > i.lvl-hi { background: var(--lvl-hi); }
+.bar > i.lvl-mid { background: var(--lvl-mid); }
+.bar > i.lvl-lo { background: var(--lvl-lo); }
+.krit .val { font-size: 12.5px; color: var(--muted); }
+
+table.kz { width: 100%; border-collapse: collapse; font-size: 15px; margin-bottom: 8px; }
+table.kz th { text-align: left; font-weight: 450; color: var(--muted); padding: 9px 8px 9px 0; vertical-align: top; }
+table.kz td { text-align: right; font-weight: 650; padding: 9px 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.kz tr + tr { border-top: 1px solid var(--line); }
+table.kz tr.main td, table.kz tr.main th { font-size: 17px; color: var(--text); font-weight: 750; }
+
+.gebot { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.gebot > div { background: var(--field); border-radius: 16px; padding: 12px; }
+.gebot > div:first-child { background: var(--accent-grad); color: var(--accent-text); box-shadow: var(--shadow-lg); }
+.gebot > div:first-child .lbl, .gebot > div:first-child .delta { color: inherit; opacity: .9; }
+.gebot .lbl { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.gebot .big { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; margin: 2px 0; }
+.gebot .delta { font-size: 12.5px; color: var(--muted); }
+
+.slider { margin: 4px 0 16px; }
+.slider label { display: flex; justify-content: space-between; font-size: 14px; font-weight: 650; margin-bottom: 6px; gap: 8px; }
+.slider label output { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 750; }
+.slider input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 36px; background: transparent; cursor: pointer; }
+.slider input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 99px; background: linear-gradient(90deg, var(--accent) var(--p, 50%), var(--bar-bg) var(--p, 50%)); }
+.slider input[type=range]::-moz-range-track { height: 8px; border-radius: 99px; background: var(--bar-bg); }
+.slider input[type=range]::-moz-range-progress { height: 8px; border-radius: 99px; background: var(--accent); }
+.slider input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 28px; height: 28px; margin-top: -10px; border-radius: 50%;
+  background: var(--card-solid); border: 3px solid var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+.slider input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--card-solid); border: 3px solid var(--accent); }
+.slider input[type=range]:focus-visible { outline: none; }
+.slider input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 6px var(--accent-soft); }
+.szenario-hint { font-size: 13px; color: var(--own-text); background: var(--own); border-radius: 14px; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.emp-titel { font-size: 22px; font-weight: 800; margin: 0 0 4px; line-height: 1.2; letter-spacing: -0.02em; }
+.vergleich { display: grid; gap: 12px; margin: 0 0 12px; }
+.strat { background: var(--field); border: 1.5px solid transparent; border-radius: 18px; padding: 12px 14px; }
+.strat.best { background: var(--accent-soft); border-color: var(--accent); }
+.strat .kopf { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.strat .kopf b { font-size: 16px; font-weight: 750; }
+.strat p { margin: 3px 0; font-size: 14px; }
+.strat .btn { margin-top: 10px; width: 100%; }
+.notes { font-size: 14px; padding-left: 18px; margin: 0 0 10px; }
+.notes li { margin-bottom: 4px; }
+.footer-note { font-size: 12.5px; color: var(--muted); text-align: center; margin: 6px 0 14px; font-weight: 600; }
+.missing { font-size: 15px; color: var(--muted); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.actions .btn { flex: 1; }
+textarea { width: 100%; min-height: 72px; border: 1.5px solid transparent; border-radius: 14px; background: var(--field); padding: 12px 14px; font-size: 16px; resize: vertical; outline: none; }
+textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); background: var(--field-focus); }
+
+/* Objektliste */
+dialog#liste {
+  border: 0; padding: 0; width: 100%; max-width: 560px; height: 100%; max-height: 100%; margin: 0 auto;
+  background: var(--bg); color: var(--text);
+}
+dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.listhead { position: sticky; top: 0; z-index: 1; background: var(--header); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); padding: calc(12px + env(safe-area-inset-top)) 16px 12px; border-bottom: 1px solid var(--line); display: flex; gap: 8px; align-items: center; }
+.listhead h2 { flex: 1; margin: 0; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; }
+.listbody { padding: 12px 16px calc(24px + env(safe-area-inset-bottom)); }
+.obj { display: flex; gap: 12px; align-items: center; background: var(--card-solid); border: 1px solid var(--line); border-radius: 18px; padding: 12px; margin: 10px 0; box-shadow: var(--shadow); }
+.obj button.open { flex: 1; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; min-height: 44px; }
+.obj .t { font-weight: 750; display: block; }
+.obj .m { font-size: 13px; color: var(--muted); display: block; }
+.tabs { margin-bottom: 8px; }
+.zvswitch { margin-bottom: 14px; border: 1.5px solid transparent; }
+.zvswitch.an { background: var(--own); color: var(--own-text); border-color: var(--gelb); }
+.zvswitch.an .sub { color: var(--own-text); }
+.syncstatus { font-size: 13px; color: var(--muted); margin: 6px 2px 12px; min-height: 18px; }
+.syncstatus.fehler { color: var(--error); font-weight: 600; }
+#btnListe { position: relative; }
+.dot { position: absolute; top: 5px; right: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--gruen); box-shadow: 0 0 0 2px var(--card-solid); }
+.dot.laeuft { background: var(--gelb); }
+.dot.fehler { background: var(--rot); }
+.card-inner { background: var(--card-solid); border-radius: 18px; padding: 14px 12px 4px; margin-bottom: 12px; border: 1px solid var(--line); }
+.marktpanel .actions { margin-bottom: 0; }
+.marktpanel #antwortBox { margin-top: 10px; }
+.empty { color: var(--muted); text-align: center; padding: 40px 0; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(8px); background: var(--text); color: var(--bg); padding: 12px 18px; border-radius: 16px; font-size: 14px; font-weight: 600; z-index: 50; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#ergebnis, #ergebnis section { scroll-margin-top: 140px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="toprow">
+      <h1><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3.5 11 12 4l8.5 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 9.5V20h12V9.5" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="2.2" fill="#fde047"/></svg></span>Immo-Quick-Check</h1>
+      <button class="btn small" id="btnNeu" type="button">Neu</button>
+      <button class="btn small" id="btnListe" type="button">Daten<span class="dot" id="syncDot" hidden></span></button>
+    </div>
+    <div class="seg" role="group" aria-label="Strategie">
+      <button type="button" data-modus="vermietung" aria-pressed="true">Vermietung</button>
+      <button type="button" data-modus="flip" aria-pressed="false">Fix &amp; Flip</button>
+      <button type="button" data-modus="empfehlung" aria-pressed="false">Empfehlung</button>
+    </div>
+    <div class="minibar" id="minibar" aria-hidden="true"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <form id="form" novalidate autocomplete="off" onsubmit="return false">
+    <section class="card" aria-labelledby="h-objekt">
+      <h2 id="h-objekt">Objekt</h2>
+      <div id="sek-objekt"></div>
+    </section>
+    <section class="card" aria-labelledby="h-eck">
+      <h2 id="h-eck">Eckdaten <span class="sub">· <span class="req">*</span> Pflichtfeld</span></h2>
+      <div id="sek-eck" class="grid2"></div>
+    </section>
+    <section class="card" aria-labelledby="h-fin">
+      <h2 id="h-fin">Finanzierung und Steuer</h2>
+      <div id="sek-fin" class="grid2"></div>
+    </section>
+    <details class="card" id="det-annahmen">
+      <summary>Weitere Annahmen <span class="sub" id="annahmenZahl"></span></summary>
+      <div id="sek-annahmen" class="grid2"></div>
+    </details>
+    <details class="card" id="det-risiko">
+      <summary>Risiken <span class="sub" id="risikoZahl"></span></summary>
+      <div id="sek-risiko"></div>
+    </details>
+  </form>
+
+  <div id="ergebnis" aria-live="polite"></div>
+</main>
+
+<dialog id="liste" aria-labelledby="h-liste">
+  <div class="listhead">
+    <h2 id="h-liste">Daten</h2>
+    <button class="btn small" type="button" id="btnSchliessen">Schließen</button>
+  </div>
+  <div class="listbody">
+    <div class="seg tabs" role="group" aria-label="Bereich">
+      <button type="button" data-tab="objekte" aria-pressed="true">Objekte</button>
+      <button type="button" data-tab="markt" aria-pressed="false">Marktdaten</button>
+      <button type="button" data-tab="teilen" aria-pressed="false">Teilen</button>
+    </div>
+    <p class="syncstatus" id="syncStatus" role="status"></p>
+
+    <div data-panel="objekte">
+      <div class="actions">
+        <button class="btn small" type="button" id="btnExport">Export (JSON)</button>
+        <button class="btn small" type="button" id="btnImport">Import</button>
+        <input type="file" id="importFile" accept="application/json,.json" class="sr" aria-label="Backup-Datei importieren">
+      </div>
+      <div id="listeInhalt"></div>
+      <p class="hint">Bitte keine Mieternamen eintragen. Ohne „Teilen“ liegen die Daten nur in diesem Browser; dann regelmäßig exportieren.</p>
+    </div>
+
+    <div data-panel="markt" hidden>
+      <p class="hint" style="margin-top:0">Selbst recherchierte Vergleichswerte. Die App setzt sie automatisch bei Objekten im selben Ort bzw. Stadtteil ein (neuester Stand zuerst).</p>
+      <form id="marktForm" class="grid2 card-inner" autocomplete="off" onsubmit="return false">
+        <input type="hidden" id="m-id">
+        <div class="field"><label for="m-ort">Ort <span class="req" aria-hidden="true">*</span></label><div class="inputrow"><input id="m-ort" type="text" placeholder="z. B. Halle (Saale)"></div></div>
+        <div class="field"><label for="m-stadtteil">Stadtteil</label><div class="inputrow"><input id="m-stadtteil" type="text" placeholder="leer = ganzer Ort"></div></div>
+        <div class="field"><label for="m-miete">Marktmiete</label><div class="inputrow"><input id="m-miete" type="text" inputmode="decimal"><span class="unit">€/m²</span></div></div>
+        <div class="field"><label for="m-kauf">Kaufpreis</label><div class="inputrow"><input id="m-kauf" type="text" inputmode="decimal"><span class="unit">€/m²</span></div></div>
+        <div class="field"><label for="m-quelle">Quelle <span class="req" aria-hidden="true">*</span></label><div class="inputrow"><input id="m-quelle" type="text" placeholder="z. B. Mietspiegel 2025"></div></div>
+        <div class="field"><label for="m-datum">Stand</label><div class="inputrow"><input id="m-datum" type="text" placeholder="JJJJ-MM"></div></div>
+        <div class="field wide"><label for="m-notiz">Notiz</label><div class="inputrow"><input id="m-notiz" type="text" placeholder="z. B. Angebotsmieten, Spanne 7–9 €"></div></div>
+        <div class="field wide"><div class="err" id="m-err" role="alert"></div>
+          <div class="actions"><button class="btn small primary" type="button" id="btnMarktSpeichern">Eintrag speichern</button><button class="btn small" type="button" id="btnMarktLeeren">Leeren</button></div></div>
+      </form>
+      <div id="marktInhalt"></div>
+      <div class="actions"><button class="btn small" type="button" id="btnMarktMd">Als 06_Marktdaten_Region.md exportieren</button></div>
+    </div>
+
+    <div data-panel="teilen" hidden>
+      <p class="hint" style="margin-top:0">Gemeinsame Objekt- und Marktdatenliste über ein <b>privates</b> GitHub-Repository. Jede Person trägt ihren eigenen Token ein. Anleitung: README, Abschnitt „Gemeinsame Objektliste“.</p>
+      <form id="ghForm" autocomplete="off" onsubmit="return false">
+        <div class="field"><label for="gh-repo">Repository</label><div class="inputrow"><input id="gh-repo" type="text" placeholder="organisation/immo-daten" autocapitalize="off" spellcheck="false"></div></div>
+        <div class="grid2">
+          <div class="field"><label for="gh-branch">Branch</label><div class="inputrow"><input id="gh-branch" type="text" placeholder="main" autocapitalize="off" spellcheck="false"></div></div>
+          <div class="field"><label for="gh-pfad">Datei</label><div class="inputrow"><input id="gh-pfad" type="text" placeholder="daten.json" autocapitalize="off" spellcheck="false"></div></div>
+        </div>
+        <div class="field"><label for="gh-token">Persönlicher Token</label><div class="inputrow"><input id="gh-token" type="password" placeholder="github_pat_…" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+          <div class="hint">Wird nur auf diesem Gerät gespeichert. Rechte: nur dieses Repository, „Contents: Read and write“.</div></div>
+        <div class="actions">
+          <button class="btn small primary" type="button" id="btnGhVerbinden">Verbinden</button>
+          <button class="btn small" type="button" id="btnGhJetzt">Abgleichen</button>
+          <button class="btn small danger" type="button" id="btnGhTrennen">Trennen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="calc.js"></script>
+<script src="daten.js"></script>
+<script>
+'use strict';
+(function () {
+  const C = window.Calc;
+  const D = window.Daten;
+  const $ = (sel, el = document) => el.querySelector(sel);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const zahl = (v) => typeof v === 'number' && Number.isFinite(v);
+
+  // -------------------------------------------------------------------------
+  // Felddefinitionen
+  // typ: text | url | eur | num | pct | jahr | int | select
+  // modus: '*' | 'vermietung' | 'flip'; std: Standardwert = Annahme
+  // -------------------------------------------------------------------------
+  const FELDER = [
+    { id: 'name', sek: 'objekt', label: 'Objektname', typ: 'text', ph: 'z. B. ETW Paulusviertel' },
+    { id: 'ort', sek: 'objekt', label: 'Adresse', typ: 'text', ph: 'Straße Nr., PLZ Ort', hilfe: 'Bundesland und Marktdaten werden daraus ermittelt' },
+    { id: 'link', sek: 'objekt', label: 'Link zum Exposé', typ: 'url', ph: 'https://…' },
+
+    { id: 'kaufpreis', sek: 'eck', label: 'Kaufpreis', zvLabel: 'Geplantes Gebot', typ: 'eur', einheit: '€', pflicht: true, wide: true, hilfe: 'Angebotspreis laut Exposé', zvHilfe: 'Grunderwerbsteuer wird auf das Gebot erhoben' },
+    { id: 'verkehrswert', sek: 'eck', zv: true, label: 'Verkehrswert laut Gutachten', typ: 'eur', einheit: '€', wide: true, hilfe: 'für Sicherheitsleistung und 5/10- bzw. 7/10-Grenze' },
+    { id: 'wohnflaeche', sek: 'eck', label: 'Wohnfläche', typ: 'num', einheit: 'm²', pflicht: true },
+    { id: 'baujahr', sek: 'eck', label: 'Baujahr', typ: 'jahr' },
+    { id: 'mieteIst', sek: 'eck', modus: 'vermietung', label: 'Nettokaltmiete Ist', typ: 'eur', einheit: '€/Monat', pflicht: true, wide: true, hilfe: 'laut Mietvertrag; bei Leerstand Marktmiete' },
+    { id: 'hausgeld', sek: 'eck', modus: 'vermietung', label: 'Hausgeld bzw. Bewirtschaftungskosten gesamt', typ: 'eur', einheit: '€/Monat', pflicht: true, wide: true },
+    { id: 'marktmieteQm', sek: 'eck', modus: 'vermietung', label: 'Marktmiete', typ: 'num', einheit: '€/m²', markt: 'mieteQm', hilfe: 'Mietspiegel oder Recherche' },
+    { id: 'marktpreisQm', sek: 'eck', modus: 'vermietung', label: 'Marktpreis', typ: 'num', einheit: '€/m²', markt: 'kaufpreisQm', hilfe: 'Kaufpreis je m² vergleichbarer Objekte' },
+    { id: 'sanierung', sek: 'eck', modus: 'flip', label: 'Sanierungskosten', typ: 'eur', einheit: '€', pflicht: true, wide: true, hilfe: 'Schätzung oder Angebot' },
+    { id: 'verkaufspreisQm', sek: 'eck', modus: 'flip', label: 'Erwarteter Verkaufspreis', typ: 'num', einheit: '€/m²', pflicht: true, wide: true, hilfe: 'Vergleichspreise sanierter Objekte, keine Wunschwerte' },
+    { id: 'haltekosten', sek: 'eck', modus: 'flip', label: 'Laufende Haltekosten', typ: 'eur', einheit: '€/Monat', wide: true, hilfe: 'Hausgeld, Grundsteuer, Versicherung, Energie bei Leerstand' },
+    { id: 'effizienzklasse', sek: 'eck', label: 'Energieeffizienzklasse', typ: 'select', optionen: ['', 'A+', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], wide: true },
+
+    { id: 'eigenkapital', sek: 'fin', label: 'Eigenkapital', typ: 'eur', einheit: '€', wide: true },
+    { id: 'zins', sek: 'fin', label: 'Sollzins', typ: 'pct', einheit: '% p. a.', std: true, hilfe: 'aktuelles Angebot eintragen' },
+    { id: 'tilgung', sek: 'fin', modus: 'vermietung', label: 'Anfangstilgung', typ: 'pct', einheit: '% p. a.', std: true },
+    { id: 'steuersatz', sek: 'fin', label: 'Grenzsteuersatz', typ: 'pct', einheit: '%', std: true },
+
+    { id: 'bundesland', sek: 'annahmen', label: 'Bundesland', typ: 'select', optionen: Object.keys(C.GRUNDERWERBSTEUER).sort((a, b) => a.localeCompare(b, 'de')), wide: true },
+    { id: 'grunderwerbsteuer', sek: 'annahmen', label: 'Grunderwerbsteuer', typ: 'pct', einheit: '%', std: true },
+    { id: 'notar', sek: 'annahmen', label: 'Notar/Grundbuch', zvLabel: 'Gericht/Grundbuch', typ: 'pct', einheit: '%', std: true, zvHilfe: 'Zuschlag, Grundbuch, Zinsen aufs Gebot' },
+    { id: 'makler', sek: 'annahmen', label: 'Makler (Käufer)', typ: 'pct', einheit: '%', std: true, hilfe: '0 bei provisionsfrei', zvHilfe: 'bei Versteigerung keine Provision' },
+    { id: 'renovierungsreserve', sek: 'annahmen', modus: 'vermietung', zv: true, label: 'Renovierungsreserve', typ: 'pct', einheit: '% vom Gebot', std: true, wide: true, hilfe: 'wird mitfinanziert, steuerlich nicht angesetzt' },
+    { id: 'nichtUmlagefaehig', sek: 'annahmen', modus: 'vermietung', label: 'nicht umlagefähig', typ: 'eur', einheit: '€/Monat', std: true, hilfe: 'vom Hausgeld; Standard 35 %' },
+    { id: 'ruecklageQm', sek: 'annahmen', modus: 'vermietung', label: 'Zusatzrücklage', typ: 'num', einheit: '€/m²·Jahr', std: true },
+    { id: 'leerstand', sek: 'annahmen', modus: 'vermietung', label: 'Leerstand', typ: 'pct', einheit: '%', std: true },
+    { id: 'gebaeudeanteil', sek: 'annahmen', modus: 'vermietung', label: 'Gebäudeanteil', typ: 'pct', einheit: '%', std: true },
+    { id: 'afaSatz', sek: 'annahmen', modus: 'vermietung', label: 'AfA-Satz', typ: 'pct', einheit: '% p. a.', std: true, hilfe: 'aus Baujahr' },
+    { id: 'zielCashflow', sek: 'annahmen', modus: 'vermietung', label: 'Ziel-Cashflow', typ: 'eur', einheit: '€/Monat', std: true, hilfe: 'nach Steuern, für das Maximalgebot' },
+    { id: 'sanierungspuffer', sek: 'annahmen', modus: 'flip', label: 'Sanierungspuffer', typ: 'pct', einheit: '%', std: true, hilfe: 'Altbau 25–30 %' },
+    { id: 'haltedauer', sek: 'annahmen', modus: 'flip', label: 'Haltedauer', typ: 'num', einheit: 'Monate', std: true },
+    { id: 'verkaufskosten', sek: 'annahmen', modus: 'flip', label: 'Verkaufskosten', typ: 'pct', einheit: '%', std: true },
+    { id: 'zielmarge', sek: 'annahmen', modus: 'flip', label: 'Zielmarge', typ: 'pct', einheit: '%', std: true },
+    { id: 'verkaeufe5J', sek: 'annahmen', modus: 'flip', label: 'Verkäufe der letzten 5 Jahre', typ: 'int', einheit: 'Anzahl', std: true, wide: true, hilfe: 'ohne dieses Objekt; ab dem 4. Verkauf Hinweis' },
+  ];
+  const FELD = Object.fromEntries(FELDER.map((f) => [f.id, f]));
+
+  const RISIKEN = {
+    vermietung: [
+      ['heizungAlt', 'Heizung älter als 25 Jahre', '−3 Punkte'],
+      ['unsaniert', 'Unsaniert', '−3 Punkte, nur bei Baujahr vor 1978'],
+      ['sonderumlage', 'Sonderumlage bekannt', '−5 Punkte'],
+      ['sonderumlageOhneAbschlag', 'Sonderumlage beschlossen, ohne Preisabschlag', 'begrenzt auf Gelb'],
+    ],
+    flip: [
+      ['statikFeuchte', 'Statik oder Feuchte ungeklärt', '−5 Punkte'],
+      ['nurSchaetzung', 'Sanierung nur geschätzt, noch kein Angebot', '−2 Punkte'],
+    ],
+  };
+
+  const LABEL_KURZ = Object.assign(Object.fromEntries(FELDER.map((f) => [f.id, f.label])), { eigenkapital: 'Eigenkapital (Nebenkosten aus EK)', bundesland: 'Bundesland' });
+
+  // -------------------------------------------------------------------------
+  // Zustand
+  // -------------------------------------------------------------------------
+  const LEER = () => ({ id: null, modus: 'vermietung', objektart: 'ETW', zv: false, felder: { bundesland: 'Sachsen-Anhalt' }, eigene: [], risiko: {}, notiz: '', geo: null });
+  let st = LEER();
+  let szenario = null; // { kaufpreis, haupt, zins } – überschreibt Basiswerte nur für die Anzeige
+  const beruehrt = new Set();
+  let letztesErgebnis = null;
+
+  const SPEICHER = 'immoQuickCheck.objekte.v1';
+  const ENTWURF = 'immoQuickCheck.entwurf.v1';
+  const lies = (key, fallback) => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } };
+  const schreib = (key, wert) => { try { localStorage.setItem(key, JSON.stringify(wert)); return true; } catch (e) { return false; } };
+
+  const istEigen = (id) => st.eigene.includes(id);
+  const sichtbar = (f) => (!f.zv || st.zv) && (!f.modus || f.modus === '*' || st.modus === 'empfehlung' || f.modus === st.modus);
+  const lbl = (f) => (st.zv && f.zvLabel) || f.label;
+  const hilfe = (f) => (st.zv && f.zvHilfe) || f.hilfe || '';
+  const risikenAktuell = () => (st.modus === 'empfehlung' ? RISIKEN.vermietung.concat(RISIKEN.flip) : RISIKEN[st.modus])
+    .concat(st.zv ? [['keineBesichtigung', 'Keine Innenbesichtigung möglich', '−3 Punkte (Zwangsversteigerung)']] : []);
+  /** Standardwerte für die Anzeige; im Modus Empfehlung aus beiden Strategien. */
+  function standardWerte(e) {
+    if (st.modus !== 'empfehlung') return C.mitStandardwerten(e, st.modus).werte;
+    return Object.assign({}, C.mitStandardwerten(e, 'flip').werte, C.mitStandardwerten(e, 'vermietung').werte);
+  }
+  /** Kaufnebenkosten aus dem letzten Ergebnis (für den Eigenkapital-Hinweis). */
+  function nebenkosten(r) {
+    if (!r) return null;
+    if (r.kz) return r.kz.kaufnebenkosten;
+    const t = r.vermietung && r.vermietung.ok ? r.vermietung : r.flip && r.flip.ok ? r.flip : null;
+    return t ? t.kz.kaufnebenkosten : null;
+  }
+
+  // -------------------------------------------------------------------------
+  // Umrechnung Formular ↔ Rechenkern
+  // -------------------------------------------------------------------------
+  function parseFeld(f, text) {
+    if (f.typ === 'text' || f.typ === 'url' || f.typ === 'select') return text || null;
+    const n = C.parseZahl(text ?? '');
+    if (n === null) return null;
+    return f.typ === 'pct' ? n / 100 : n;
+  }
+
+  /** Ungültige Zahleneingaben (Text, der keine Zahl ist). */
+  function parseFehler() {
+    const out = [];
+    for (const f of FELDER) {
+      if (!sichtbar(f) || ['text', 'url', 'select'].includes(f.typ)) continue;
+      const t = st.felder[f.id];
+      if (f.std && !istEigen(f.id)) continue;
+      if (t && t.trim() !== '' && C.parseZahl(t) === null) out.push({ feld: f.id, text: `${f.label}: bitte eine gültige Zahl eingeben.` });
+    }
+    return out;
+  }
+
+  function eingabe(mitSzenario) {
+    const e = { objektart: st.objektart, zwangsversteigerung: st.zv, risiko: Object.assign({}, st.risiko) };
+    if (!st.zv) delete e.risiko.keineBesichtigung;
+    for (const f of FELDER) {
+      if (!sichtbar(f)) continue;
+      if (f.std && !istEigen(f.id)) { e[f.id] = null; continue; }
+      e[f.id] = parseFeld(f, st.felder[f.id]);
+      if (f.markt && e[f.id] === null && !(st.felder[f.id] || '').trim()) {
+        const t = marktTreffer();
+        if (t && zahl(t[f.markt])) e[f.id] = t[f.markt];
+      }
+    }
+    if (mitSzenario && szenario) {
+      if (zahl(szenario.kaufpreis)) e.kaufpreis = szenario.kaufpreis;
+      if (zahl(szenario.zins)) e.zins = szenario.zins;
+      if (zahl(szenario.haupt)) e[st.modus === 'flip' ? 'verkaufspreisQm' : 'mieteIst'] = szenario.haupt;
+    }
+    return e;
+  }
+
+  function fmtFeld(f, wert) {
+    if (!zahl(wert)) return '';
+    switch (f.typ) {
+      case 'pct': return C.fmtZahl(wert * 100, wert * 100 % 1 === 0 ? 0 : (Math.round(wert * 10000) % 10 === 0 ? 1 : 2));
+      case 'eur': return C.fmtZahl(wert, wert % 1 === 0 ? 0 : 2);
+      case 'jahr': case 'int': return String(Math.round(wert));
+      default: return C.fmtZahl(wert, wert % 1 === 0 ? 0 : 2);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Formular aufbauen
+  // -------------------------------------------------------------------------
+  function feldHtml(f) {
+    const id = 'f-' + f.id;
+    const desc = `${id}-hint ${id}-err`;
+    let control;
+    if (f.typ === 'select') {
+      control = `<select id="${id}" data-feld="${f.id}" aria-describedby="${desc}">${f.optionen.map((o) =>
+        `<option value="${esc(o)}">${esc((f.optionTexte && f.optionTexte[o]) || o || '– keine Angabe –')}</option>`).join('')}</select>`;
+    } else {
+      const im = f.typ === 'text' ? 'text' : f.typ === 'url' ? 'url' : (f.typ === 'jahr' || f.typ === 'int') ? 'numeric' : 'decimal';
+      const type = f.typ === 'url' ? 'url' : 'text';
+      control = `<input id="${id}" data-feld="${f.id}" type="${type}" inputmode="${im}" ${f.ph ? `placeholder="${esc(f.ph)}"` : ''} ${f.pflicht ? 'aria-required="true"' : ''} aria-describedby="${desc}" enterkeyhint="next" spellcheck="false" autocapitalize="${f.typ === 'text' ? 'sentences' : 'off'}">`;
+    }
+    const unit = f.einheit ? `<span class="unit" aria-hidden="true">${esc(f.einheit)}</span>` : '';
+    const sr = f.einheit ? `<span class="sr"> in ${esc(f.einheit)}</span>` : '';
+    return `<div class="field${f.wide ? ' wide' : ''}" data-wrap="${f.id}">
+      <label for="${id}">${esc(lbl(f))}${sr}${f.pflicht ? ' <span class="req" aria-hidden="true">*</span>' : ''}</label>
+      <div class="inputrow">${control}${unit}</div>
+      <div class="meta"><span class="tag" data-tag="${f.id}"></span><span class="hint" id="${id}-hint">${esc(hilfe(f))}</span></div>
+      <div class="err" id="${id}-err" role="alert"></div>
+    </div>`;
+  }
+
+  function baueFormular() {
+    for (const sek of ['objekt', 'eck', 'fin', 'annahmen']) {
+      const el = $('#sek-' + sek);
+      let html = FELDER.filter((f) => f.sek === sek && sichtbar(f)).map(feldHtml).join('');
+      if (sek === 'objekt') {
+        html = `<label class="check zvswitch${st.zv ? ' an' : ''}"><input type="checkbox" id="zvToggle" ${st.zv ? 'checked' : ''}>
+          <span><b>Zwangsversteigerung</b><br><span class="sub">Gebot statt Kaufpreis, keine Maklerprovision, Renovierungsreserve und Risikoabzug</span></span></label>` + html;
+      }
+      if (sek === 'eck' && st.modus !== 'flip') {
+        html = `<div class="field wide"><span class="lbl" id="lbl-art">Objektart</span>
+          <div class="seg" role="group" aria-labelledby="lbl-art">
+            <button type="button" data-art="ETW" aria-pressed="${st.objektart === 'ETW'}">ETW</button>
+            <button type="button" data-art="MFH" aria-pressed="${st.objektart === 'MFH'}">MFH</button>
+          </div><div class="hint">steuert die Zusatzrücklage (8 bzw. 12 €/m²)</div></div>` + html;
+      }
+      if (sek === 'eck' && st.modus !== 'flip') {
+        html += `<div class="field wide marktpanel" id="marktpanel">
+          <div class="actions">
+            <button class="btn small" type="button" id="btnClaude">Marktdaten mit Claude recherchieren</button>
+            <button class="btn small" type="button" id="btnAntwortZeigen">Antwort einfügen</button>
+          </div>
+          <div id="antwortBox" hidden>
+            <label class="lbl" for="claudeAntwort">Claude-Antwort (mindestens die Zeile „MARKTDATEN; …“)</label>
+            <textarea id="claudeAntwort" placeholder="MARKTDATEN; Ort=…; Stadtteil=…; Miete=…; Kaufpreis=…; Quelle=…; Stand=…"></textarea>
+            <div class="actions" style="margin-top:8px"><button class="btn small primary" type="button" id="btnAntwortUebernehmen">In Marktdaten übernehmen</button></div>
+          </div>
+        </div>`;
+      }
+      if (sek === 'fin' && st.modus !== 'vermietung') {
+        html += `<div class="field wide"><span class="lbl">Steuerstatus</span><div class="static">privat, Verkauf innerhalb 10 Jahren – Gewinn mit Grenzsteuersatz</div></div>`;
+      }
+      el.innerHTML = html;
+    }
+    $('#sek-risiko').innerHTML = risikenAktuell().map(([key, text, wirkung]) =>
+      `<label class="check"><input type="checkbox" data-risiko="${key}" ${st.risiko[key] ? 'checked' : ''}><span>${esc(text)}<br><span class="sub">${esc(wirkung)}</span></span></label>`).join('')
+      + (st.modus !== 'flip' ? '<p class="hint">Vermietung: Effizienzklasse F bis H zählt automatisch (−4).</p>' : '')
+      + (st.modus !== 'vermietung' ? '<p class="hint">Fix &amp; Flip: Sanierung über 30 % des Kaufpreises (−5) und Baujahr vor 1950 (−3) zählen automatisch.</p>' : '')
+      + (st.zv ? '<p class="hint">Zwangsversteigerung zählt automatisch (−3, keine Gewährleistung).</p>' : '');
+
+    for (const f of FELDER) {
+      if (!sichtbar(f)) continue;
+      const el = $('#f-' + f.id);
+      if (!f.std || istEigen(f.id)) el.value = st.felder[f.id] ?? (f.typ === 'select' ? f.optionen[0] : '');
+    }
+    document.querySelectorAll('.seg [data-modus]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modus === st.modus)));
+    aktualisiere();
+  }
+
+  // Standardwerte (Annahmen) in die Felder schreiben, Etiketten setzen.
+  function zeigeStandardwerte(werte) {
+    let zahlAnnahmen = 0;
+    for (const f of FELDER) {
+      if (!sichtbar(f)) continue;
+      const tag = document.querySelector(`[data-tag="${f.id}"]`);
+      const wrap = document.querySelector(`[data-wrap="${f.id}"]`);
+      if (!tag || !wrap) continue;
+      if (f.std) {
+        const el = $('#f-' + f.id);
+        if (istEigen(f.id)) {
+          tag.innerHTML = `<span class="chip own">eigener Wert</span><button type="button" class="reset" data-reset="${f.id}" aria-label="${esc(f.label)} auf Annahme zurücksetzen">↺ zurück</button>`;
+          wrap.classList.remove('is-std');
+        } else {
+          const v = werte ? werte[f.id] : null;
+          if (document.activeElement !== el) el.value = fmtFeld(f, v);
+          el.placeholder = zahl(v) ? '' : (f.id === 'nichtUmlagefaehig' ? '35 % des Hausgelds' : f.id === 'afaSatz' ? 'Baujahr eingeben' : 'bitte eintragen');
+          tag.innerHTML = zahl(v) ? '<span class="chip">Annahme</span>' : '';
+          if (f.id === 'grunderwerbsteuer') $('#f-grunderwerbsteuer-hint').textContent = zahl(v) ? `Satz ${st.felder.bundesland}, Stand ${C.GRUNDERWERBSTEUER_STAND}` : '';
+          wrap.classList.toggle('is-std', zahl(v));
+          if (zahl(v)) zahlAnnahmen++;
+        }
+      } else if (f.markt) {
+        const el = $('#f-' + f.id);
+        const eigen = (st.felder[f.id] || '').trim();
+        const t = eigen ? null : marktTreffer();
+        const hint = $('#f-' + f.id + '-hint');
+        if (t && zahl(t[f.markt])) {
+          if (document.activeElement !== el) el.value = fmtFeld(f, t[f.markt]);
+          wrap.classList.add('is-std');
+          tag.innerHTML = '<span class="chip">Marktdaten</span>';
+          hint.textContent = [t.ort + (t.stadtteil ? ' · ' + t.stadtteil : ''), t.quelle, t.datum].filter(Boolean).join(' · ');
+        } else {
+          if (!eigen && document.activeElement !== el) el.value = '';
+          wrap.classList.remove('is-std');
+          tag.innerHTML = '';
+          hint.textContent = hilfe(f);
+        }
+      } else if (f.id === 'ort') {
+        const g = st.geo;
+        const hint = $('#f-ort-hint');
+        if (geoLaeuft) hint.textContent = 'Adresse wird gesucht …';
+        else if (g && g.text === (st.felder.ort || '').trim()) {
+          hint.innerHTML = g.bundesland
+            ? `${esc([g.stadt, g.stadtteil, g.bundesland].filter(Boolean).join(' · '))} <span class="sub">· Adresssuche <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></span>`
+            : 'Adresse nicht gefunden – Bundesland bitte unter „Weitere Annahmen“ wählen.';
+        } else hint.textContent = hilfe(f);
+      } else if (f.id === 'bundesland') {
+        $('#f-bundesland-hint').textContent = st.geo && st.geo.bundesland === st.felder.bundesland ? 'aus der Adresse ermittelt' : '';
+      } else if (f.id === 'eigenkapital') {
+        const leer = !(st.felder.eigenkapital || '').trim();
+        tag.innerHTML = leer ? '<span class="chip">Annahme</span>' : '';
+        const nk = letztesErgebnis && letztesErgebnis.ok ? nebenkosten(letztesErgebnis) : null;
+        $('#f-eigenkapital-hint').textContent = leer
+          ? `leer = Kaufnebenkosten aus Eigenkapital${zahl(nk) ? ` (${C.fmtEuro(nk)})` : ''}`
+          : (st.modus === 'flip' ? 'Rest inkl. Sanierung wird finanziert' : '');
+        if (leer) $('#f-eigenkapital').placeholder = zahl(nk) ? C.fmtZahl(nk, 0) : 'leer = Nebenkosten';
+      }
+    }
+    $('#annahmenZahl').textContent = `· ${zahlAnnahmen} Standardwerte`;
+    const nRisiko = risikenAktuell().filter(([k]) => st.risiko[k]).length;
+    $('#risikoZahl').textContent = nRisiko ? `· ${nRisiko} markiert` : '· keine markiert';
+  }
+
+  function zeigeFehler(fehler) {
+    const proFeld = {};
+    for (const f of fehler) if (!proFeld[f.feld]) proFeld[f.feld] = f.text;
+    for (const f of FELDER) {
+      if (!sichtbar(f)) continue;
+      const wrap = document.querySelector(`[data-wrap="${f.id}"]`);
+      const err = $('#f-' + f.id + '-err');
+      const zeigen = proFeld[f.id] && (beruehrt.has(f.id) || !/^Bitte .* eingeben\.$/.test(proFeld[f.id]));
+      err.textContent = zeigen ? proFeld[f.id] : '';
+      wrap.classList.toggle('has-error', !!zeigen);
+      $('#f-' + f.id).setAttribute('aria-invalid', zeigen ? 'true' : 'false');
+    }
+    // Fehler bei Feldern, die in eingeklappten Bereichen liegen → Bereich öffnen
+    if (fehler.some((f) => FELD[f.feld] && FELD[f.feld].sek === 'annahmen' && !/^Bitte .* eingeben\.$/.test(f.text))) $('#det-annahmen').open = true;
+    if (fehler.some((f) => f.feld === 'grunderwerbsteuer' || f.feld === 'afaSatz') && (beruehrt.size > 0)) $('#det-annahmen').open = true;
+  }
+
+  // -------------------------------------------------------------------------
+  // Berechnen und Ergebnis anzeigen
+  // -------------------------------------------------------------------------
+  function aktualisiere() {
+    const pf = parseFehler();
+    const basisEingabe = eingabe(false);
+    const werte = standardWerte(basisEingabe);
+    if (st.modus === 'empfehlung') {
+      let e = C.empfehlung(basisEingabe);
+      if (pf.length) e = { ok: false, vermietung: { ok: false, fehler: pf }, flip: { ok: false, fehler: pf } };
+      letztesErgebnis = e;
+      zeigeStandardwerte(werte);
+      const alle = [].concat(e.vermietung.ok ? [] : e.vermietung.fehler, e.flip.ok ? [] : e.flip.fehler);
+      // Fehlende Pflichtfelder der nicht bewertbaren Strategie nur zeigen, wenn gar nichts bewertbar ist
+      zeigeFehler(e.ok ? alle.filter((f) => !/^Bitte .* eingeben\.$/.test(f.text)) : alle);
+      zeigeEmpfehlung(e);
+      speichereEntwurf();
+      return;
+    }
+    let erg = C.berechne(eingabe(true), st.modus);
+    if (pf.length) erg = { ok: false, modus: st.modus, fehler: pf.concat(erg.fehler || []) };
+    letztesErgebnis = erg;
+    zeigeStandardwerte(werte);
+    zeigeFehler(erg.ok ? [] : erg.fehler);
+    zeigeErgebnis(erg, basisEingabe);
+    speichereEntwurf();
+  }
+
+  const AMPEL_SYMBOL = { gruen: '●', gelb: '▲', rot: '■' };
+
+  function zeigeErgebnis(r, basis) {
+    const out = $('#ergebnis');
+    const mini = $('#minibar');
+    if (!r.ok) {
+      const fehlend = r.fehler.map((f) => (FELD[f.feld] ? FELD[f.feld].label : f.feld));
+      const uniq = [...new Set(fehlend)];
+      out.innerHTML = `<section class="card"><h2>Ergebnis</h2><p class="missing">Für das Ergebnis fehlt noch: <b>${esc(uniq.join(', '))}</b>.</p>
+        <ul class="notes">${r.fehler.map((f) => `<li>${esc(f.text)}</li>`).join('')}</ul>
+        <p class="footer-note">Modellrechnung, keine Steuer-, Rechts- oder Finanzberatung.</p></section>`;
+      mini.innerHTML = `<span class="txt">Pflichtfelder ausfüllen, dann erscheint der Score.</span>`;
+      return;
+    }
+    const s = r.score;
+    const k = r.kz;
+    const flip = r.modus === 'flip';
+    const angebot = basis.kaufpreis;
+
+    mini.innerHTML = `<span class="badge a-${s.ampel}">${AMPEL_SYMBOL[s.ampel]} ${s.punktzahl} · ${s.ampelText}</span>
+      <span class="txt">${esc(flip ? `Marge ${C.fmtProzent(k.marge)}` : `CF n. St. ${C.fmtEuroVz(k.cashflowNachSteuernMonat)}/Monat`)}</span>
+      <a href="#ergebnis">Ergebnis ↓</a>`;
+
+    const krit = s.kriterien.map((c) => {
+      const anteil = c.gewicht ? c.punkte / c.gewicht : 0;
+      return `<div class="krit">
+        <div class="row"><b>${esc(c.name)}</b><span>${C.fmtZahl(c.punkte, 1)} / ${c.gewicht}</span></div>
+        <div class="bar" role="img" aria-label="${esc(c.name)}: ${C.fmtZahl(c.punkte, 1)} von ${c.gewicht} Punkten"><i class="lvl-${anteil >= 0.7 ? 'hi' : anteil >= 0.4 ? 'mid' : 'lo'}" style="width:${(anteil * 100).toFixed(1)}%"></i></div>
+        <div class="val">${esc(c.wertText)}${c.hinweis ? ' – ' + esc(c.hinweis) : ''}</div>
+      </div>`;
+    }).join('');
+
+    const zeile = (label, wert, main) => `<tr${main ? ' class="main"' : ''}><th scope="row">${esc(label)}</th><td>${esc(wert)}</td></tr>`;
+    const zvZeilen = () => (!st.zv ? [] : [
+      zeile('Verkehrswert laut Gutachten', zahl(k.verkehrswert) ? C.fmtEuro(k.verkehrswert) : '– (nicht eingetragen)'),
+      zeile('Gebot / Verkehrswert', zahl(k.gebotZuVerkehrswert) ? C.fmtProzent(k.gebotZuVerkehrswert, 0) : '–'),
+      zeile('Sicherheitsleistung (10 % VW)', zahl(k.sicherheitsleistung) ? C.fmtEuro(k.sicherheitsleistung) : '–'),
+    ]);
+    let tabelle;
+    if (flip) {
+      tabelle = [
+        zeile('Marge auf Verkaufspreis', C.fmtProzent(k.marge), true),
+        zeile('Gewinn vor Steuern', C.fmtEuro(k.gewinnVorSteuern)),
+        zeile('Steuer (privat)', C.fmtEuro(k.steuer)),
+        zeile('Gewinn nach Steuern', C.fmtEuro(k.gewinnNachSteuern), true),
+        zeile('Verkaufserlös', C.fmtEuro(k.verkaufserloes)),
+        zeile('Gesamtkosten', C.fmtEuro(k.gesamtkosten)),
+        zeile('davon Kaufnebenkosten', C.fmtEuro(k.kaufnebenkosten)),
+        zeile('davon Sanierung inkl. Puffer', C.fmtEuro(k.sanierungGesamt)),
+        zeile('davon Finanzierung', C.fmtEuro(k.finanzierungskosten)),
+        zeile('davon Haltekosten', C.fmtEuro(k.haltekostenGesamt)),
+        zeile('davon Verkaufskosten', C.fmtEuro(k.verkaufskosten)),
+        zeile('Darlehen', C.fmtEuro(k.darlehen)),
+        zeile('Eigenkapital', C.fmtEuro(k.eigenkapital)),
+        zeile('Rendite auf Gesamtkosten', C.fmtProzent(k.renditeGesamtkosten)),
+        zeile('Eigenkapitalrendite p. a.', zahl(k.eigenkapitalrenditePa) ? C.fmtProzent(k.eigenkapitalrenditePa) : '– (kein EK)'),
+        zeile('Preispuffer', C.fmtProzent(k.preispuffer)),
+        zeile('Erlös bei Gewinn 0', C.fmtEuro(k.erloesBeiGewinnNull)),
+        zeile('Stresstest (VK −10 %, San. +20 %, +3 Mon.)', C.fmtEuro(k.gewinnStress), true),
+        zeile('70-%-Regel: max. Kaufpreis', C.fmtEuro(k.faustregel70)),
+        zeile('Kaufpreis je m²', C.fmtEuro(k.kaufpreisQm)),
+      ].concat(zvZeilen()).join('');
+    } else {
+      tabelle = [
+        zeile('Cashflow nach Steuern / Monat', C.fmtEuroVz(k.cashflowNachSteuernMonat), true),
+        zeile('Cashflow vor Steuern / Monat', C.fmtEuroVz(k.cashflowVorSteuernMonat)),
+        zeile('Kaufpreisfaktor', zahl(k.kaufpreisfaktor) ? C.fmtZahl(k.kaufpreisfaktor, 1) : '–'),
+        zeile('Bruttomietrendite', C.fmtProzent(k.bruttomietrendite, 2)),
+        zeile('Nettomietrendite', C.fmtProzent(k.nettomietrendite, 2)),
+        zeile('Kapitaldienstdeckung (DSCR)', zahl(k.dscr) ? C.fmtZahl(k.dscr, 2) : '– (kein Darlehen)'),
+        zeile('Eigenkapitalrendite', zahl(k.eigenkapitalrendite) ? C.fmtProzent(k.eigenkapitalrendite) : '– (kein EK)'),
+        zeile('Kaufpreis je m²', C.fmtEuro(k.kaufpreisQm)),
+        zeile('Miete je m² / Marktmiete', zahl(k.mieteZuMarkt) ? `${C.fmtZahl(k.mieteQm, 2)} € · ${C.fmtProzent(k.mieteZuMarkt, 0)}` : `${C.fmtZahl(k.mieteQm, 2)} € · –`),
+        zeile('Break-even-Miete / Monat', zahl(k.breakEvenMiete) ? C.fmtEuro(k.breakEvenMiete) : '– (nicht erreichbar)'),
+        zeile('Sondertilgungspotenzial / Jahr', C.fmtEuro(k.sondertilgungspotenzial)),
+        zeile('Kaufnebenkosten', C.fmtEuro(k.kaufnebenkosten)),
+        zeile('Gesamtinvestition', C.fmtEuro(k.gesamtinvestition)),
+        zeile('Eigenkapital', C.fmtEuro(k.eigenkapital)),
+        zeile('Darlehen', C.fmtEuro(k.darlehen)),
+        zeile('Kapitaldienst / Jahr', C.fmtEuro(k.kapitaldienst)),
+        zeile('Zinsen / Tilgung Jahr 1', `${C.fmtEuro(k.zinsenJahr1)} / ${C.fmtEuro(k.tilgungJahr1)}`),
+        zeile('Reinertrag (NOI) / Jahr', C.fmtEuro(k.reinertrag)),
+        zeile('AfA / Jahr', C.fmtEuro(k.afa)),
+        zeile('Steuerwirkung / Jahr', `${C.fmtEuroVz(k.steuerwirkung)} ${k.steuerwirkung < 0 ? '(Erstattung)' : '(Steuerlast)'}`),
+      ].concat(k.renovierung > 0 ? [zeile('davon Renovierungsreserve', C.fmtEuro(k.renovierung))] : [], zvZeilen()).join('');
+    }
+
+    const gebotKarte = (titel, wert) => {
+      if (!zahl(wert)) return `<div><div class="lbl">${esc(titel)}</div><div class="big">–</div><div class="delta">nicht erreichbar</div></div>`;
+      const g = Math.floor(wert / 100) * 100;
+      const d = g - angebot;
+      return `<div><div class="lbl">${esc(titel)}</div><div class="big">${C.fmtEuro(g)}</div>
+        <div class="delta">${d >= 0 ? '+' : ''}${C.fmtEuro(d)} (${d >= 0 ? '+' : ''}${C.fmtProzent(d / angebot)}) zum ${st.zv ? 'Gebot' : 'Angebot'}</div></div>`;
+    };
+
+    const hauptBasis = flip ? basis.verkaufspreisQm : basis.mieteIst;
+    const sk = szenario || {};
+    const kpWert = zahl(sk.kaufpreis) ? sk.kaufpreis : angebot;
+    const hauptWert = zahl(sk.haupt) ? sk.haupt : hauptBasis;
+    const zinsWert = zahl(sk.zins) ? sk.zins : r.werte.zins;
+    const zinsBasis = C.mitStandardwerten(basis, r.modus).werte.zins;
+    const aktiv = (zahl(sk.kaufpreis) && sk.kaufpreis !== angebot) || (zahl(sk.haupt) && sk.haupt !== hauptBasis) || (zahl(sk.zins) && Math.abs(sk.zins - zinsBasis) > 1e-9);
+    const kpStep = angebot >= 200000 ? 1000 : 500;
+    const pct = (v, lo, hi) => `${(hi > lo ? Math.min(100, Math.max(0, ((v - lo) / (hi - lo)) * 100)) : 50).toFixed(1)}%`;
+    const hauptLabel = flip ? 'Verkaufspreis je m²' : 'Nettokaltmiete / Monat';
+    const hauptStep = flip ? 10 : 10;
+    const hauptMin = Math.max(0, Math.floor(hauptBasis * 0.6 / hauptStep) * hauptStep);
+    const hauptMax = Math.max(hauptStep * 10, Math.ceil(hauptBasis * 1.4 / hauptStep) * hauptStep);
+
+    const annahmen = r.annahmen.filter((a) => LABEL_KURZ[a] && (FELD[a] ? sichtbar(FELD[a]) : true));
+    const annahmeText = annahmen.map((a) => {
+      if (a === 'eigenkapital') return `Eigenkapital = Kaufnebenkosten (${C.fmtEuro(r.kz.kaufnebenkosten)})`;
+      if (a === 'bundesland') return null;
+      const f = FELD[a];
+      return `${lbl(f)} ${fmtFeld(f, r.werte[a])}${f.einheit ? ' ' + f.einheit.replace('% p. a.', '%') : ''}`;
+    }).filter(Boolean);
+
+    out.innerHTML = `
+      <section class="card" aria-labelledby="h-score">
+        <h2 id="h-score">Ergebnis${st.zv ? ' <span class="chip">Zwangsversteigerung</span>' : ''}${aktiv ? ' <span class="chip own">Szenario</span>' : ''}</h2>
+        <div class="score">
+          <div class="scorebox a-${s.ampel}" aria-hidden="true"><span class="num">${s.punktzahl}</span><span class="of">von 100</span></div>
+          <div>
+            <p class="ampeltext">${AMPEL_SYMBOL[s.ampel]} ${esc(s.ampelText)} – ${esc(s.empfehlung)}</p>
+            <p class="begruendung">${esc(s.begruendung)}</p>
+            <p class="sr">Score ${s.punktzahl} von 100.</p>
+          </div>
+        </div>
+        ${s.ko.length ? `<div class="ko"><ul>${s.ko.map((x) => `<li>${esc(x.text)} → ${x.stufe === 'rot' ? 'Rot' : 'höchstens Gelb'}</li>`).join('')}</ul></div>` : ''}
+        <div style="height:14px"></div>
+        ${krit}
+      </section>
+
+      <section class="card" aria-labelledby="h-gebot">
+        <h2 id="h-gebot">${st.zv ? 'Bietgrenze' : 'Maximalgebot'}</h2>
+        <div class="gebot">
+          ${gebotKarte(r.maximalgebot.zielText, r.maximalgebot.ziel)}
+          ${gebotKarte('für Grün (Score ≥ 70)', r.maximalgebot.gruen)}
+        </div>
+        <p class="hint" style="margin-top:0">${st.zv ? 'Geplantes Gebot' : 'Angebotspreis'} ${C.fmtEuro(angebot)}. Abgerundet auf 100 €.${aktiv ? ' Mit den Werten aus dem Szenario gerechnet.' : ''}</p>
+      </section>
+
+      <section class="card" aria-labelledby="h-szen">
+        <h2 id="h-szen">Szenario</h2>
+        ${aktiv ? `<div class="szenario-hint"><span>Regler weichen von der Eingabe ab.</span><span><button class="btn small" type="button" id="szenUebernehmen">Übernehmen</button> <button class="btn small" type="button" id="szenReset">Zurücksetzen</button></span></div>` : ''}
+        <div class="slider">
+          <label for="sl-kp">Kaufpreis <output id="o-kp">${C.fmtEuro(kpWert)}</output></label>
+          <input type="range" id="sl-kp" data-sl="kaufpreis" min="${Math.floor(angebot * 0.6 / kpStep) * kpStep}" max="${Math.ceil(angebot * 1.2 / kpStep) * kpStep}" step="${kpStep}" value="${kpWert}" style="--p:${pct(kpWert, Math.floor(angebot * 0.6 / kpStep) * kpStep, Math.ceil(angebot * 1.2 / kpStep) * kpStep)}">
+        </div>
+        <div class="slider">
+          <label for="sl-haupt">${esc(hauptLabel)} <output id="o-haupt">${C.fmtEuro(hauptWert)}</output></label>
+          <input type="range" id="sl-haupt" data-sl="haupt" min="${hauptMin}" max="${hauptMax}" step="${hauptStep}" value="${hauptWert}" style="--p:${pct(hauptWert, hauptMin, hauptMax)}">
+        </div>
+        <div class="slider">
+          <label for="sl-zins">Sollzins <output id="o-zins">${C.fmtProzent(zinsWert, 2)}</output></label>
+          <input type="range" id="sl-zins" data-sl="zins" min="0" max="0.1" step="0.0005" value="${zinsWert}" style="--p:${pct(zinsWert, 0, 0.1)}">
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h-kz">
+        <h2 id="h-kz">Kennzahlen</h2>
+        <table class="kz">${tabelle}</table>
+      </section>
+
+      <section class="card" aria-labelledby="h-hinw">
+        <h2 id="h-hinw">Hinweise und Annahmen</h2>
+        ${r.hinweise.length ? `<ul class="notes">${r.hinweise.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
+        ${annahmeText.length ? `<p class="hint">Gerechnet mit Annahmen: ${esc(annahmeText.join(' · '))}. Vor einer Kaufentscheidung objektbezogen ersetzen.</p>` : ''}
+        <p class="hint">Nicht enthalten: Mietsteigerung, Wertsteigerung, Anschlusszins.</p>
+        <label class="lbl" for="notiz" style="font-weight:600;font-size:14px;display:block;margin:10px 0 4px">Notiz / Grund (z. B. warum verworfen)</label>
+        <textarea id="notiz" maxlength="500" placeholder="ohne Mieternamen">${esc(st.notiz)}</textarea>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn primary" type="button" id="btnSpeichern">${st.id ? 'Änderungen speichern' : 'In Objektliste speichern'}</button>
+        </div>
+        <p class="footer-note">Modellrechnung, keine Steuer-, Rechts- oder Finanzberatung.</p>
+      </section>`;
+  }
+
+  const AKTION_SYMBOL = { pruefen: '●', verhandeln: '▲', verwerfen: '■' };
+
+  function zeigeEmpfehlung(e) {
+    const out = $('#ergebnis');
+    const mini = $('#minibar');
+    const fussnote = '<p class="footer-note">Modellrechnung, keine Steuer-, Rechts- oder Finanzberatung.</p>';
+    const fehlt = (r) => [...new Set(r.fehler.map((f) => (FELD[f.feld] ? FELD[f.feld].label : f.feld)))].join(', ');
+
+    if (!e.ok) {
+      out.innerHTML = `<section class="card"><h2>Empfehlung</h2>
+        <p class="missing">Für eine Empfehlung braucht mindestens eine Strategie alle Pflichtangaben.</p>
+        <ul class="notes"><li><b>Vermietung</b> fehlt: ${esc(fehlt(e.vermietung))}</li><li><b>Fix &amp; Flip</b> fehlt: ${esc(fehlt(e.flip))}</li></ul>
+        ${fussnote}</section>`;
+      mini.innerHTML = '<span class="txt">Pflichtfelder ausfüllen, dann erscheint die Empfehlung.</span>';
+      return;
+    }
+
+    mini.innerHTML = `<span class="badge a-${e.ampel}">${AMPEL_SYMBOL[e.ampel]} ${e.punktzahl} · ${esc(e.aktion === 'verwerfen' ? 'Rot' : e.strategie)}</span>
+      <span class="txt">${esc(e.titel)}</span><a href="#ergebnis">Ergebnis ↓</a>`;
+
+    const karte = (modus) => {
+      const r = e[modus];
+      const name = C.STRATEGIE_NAME[modus];
+      const best = e.empfohlen === modus && e.aktion !== 'verwerfen';
+      const hoeher = e.empfohlen === modus && e.aktion === 'verwerfen' && e.vermietung.ok && e.flip.ok;
+      if (!r.ok) {
+        return `<div class="strat"><div class="kopf"><b>${esc(name)}</b><span class="sub">nicht bewertbar</span></div>
+          <p class="sub">Es fehlt: ${esc(fehlt(r))}</p></div>`;
+      }
+      const s = r.score;
+      const kern = modus === 'flip'
+        ? `Marge ${C.fmtProzent(r.kz.marge)} · Gewinn n. St. ${C.fmtEuro(r.kz.gewinnNachSteuern)}`
+        : `Cashflow n. St. ${C.fmtEuroVz(r.kz.cashflowNachSteuernMonat)}/Monat · DSCR ${zahl(r.kz.dscr) ? C.fmtZahl(r.kz.dscr, 2) : '–'}`;
+      const g = r.maximalgebot.ziel;
+      return `<div class="strat${best ? ' best' : ''}">
+        <div class="kopf"><b>${esc(name)}${best ? ' <span class="chip">empfohlen</span>' : hoeher ? ' <span class="chip">höherer Score</span>' : ''}</b>
+          <span class="badge a-${s.ampel}">${AMPEL_SYMBOL[s.ampel]} ${s.punktzahl} · ${esc(s.ampelText)}</span></div>
+        <p>${esc(kern)}</p>
+        <p class="sub">${esc(s.begruendung)}</p>
+        <p class="sub">${st.zv ? 'Bietgrenze' : 'Maximalgebot'} (${esc(r.maximalgebot.zielText)}): ${zahl(g) ? C.fmtEuro(Math.floor(g / 100) * 100) : 'nicht erreichbar'}</p>
+        <button class="btn small" type="button" data-wechsel="${modus}">Details ${esc(name)}</button>
+      </div>`;
+    };
+
+    const hinweise = e.flip.ok ? e.flip.hinweise : [];
+    out.innerHTML = `
+      <section class="card" aria-labelledby="h-emp">
+        <h2 id="h-emp">Empfehlung</h2>
+        <div class="score">
+          <div class="scorebox a-${e.ampel}" aria-hidden="true"><span class="num">${e.punktzahl}</span><span class="of">von 100</span></div>
+          <div>
+            <p class="emp-titel">${AKTION_SYMBOL[e.aktion]} ${esc(e.titel)}</p>
+            <p class="begruendung">${esc(e.text)}</p>
+            <p class="sr">Score ${e.punktzahl} von 100, Ampel ${esc(e.ampel)}.</p>
+          </div>
+        </div>
+        <p class="hint">${esc(e.begruendung)}</p>
+      </section>
+
+      <section class="card" aria-labelledby="h-vgl">
+        <h2 id="h-vgl">Vergleich der Strategien</h2>
+        <div class="vergleich">${karte('vermietung')}${karte('flip')}</div>
+        <p class="hint">Empfohlen wird die Strategie mit dem höheren Score. Die Ampel bestimmt den nächsten Schritt: Grün vertieft prüfen, Gelb nur mit Preisnachlass, Rot verwerfen.</p>
+      </section>
+
+      <section class="card" aria-labelledby="h-hinw">
+        <h2 id="h-hinw">Hinweise</h2>
+        ${hinweise.length ? `<ul class="notes">${hinweise.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
+        <p class="hint">Standardwerte sind Annahmen (siehe „Weitere Annahmen“). Nicht enthalten: Mietsteigerung, Wertsteigerung, Anschlusszins.</p>
+        <label class="lbl" for="notiz" style="font-weight:600;font-size:14px;display:block;margin:10px 0 4px">Notiz / Grund (z. B. warum verworfen)</label>
+        <textarea id="notiz" maxlength="500" placeholder="ohne Mieternamen">${esc(st.notiz)}</textarea>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn primary" type="button" id="btnSpeichern">${st.id ? 'Änderungen speichern' : 'In Objektliste speichern'}</button>
+        </div>
+        ${fussnote}
+      </section>`;
+  }
+
+  // -------------------------------------------------------------------------
+  // Ereignisse
+  // -------------------------------------------------------------------------
+  const form = $('#form');
+  form.addEventListener('input', (ev) => {
+    const t = ev.target;
+    if (t.dataset.feld) {
+      const f = FELD[t.dataset.feld];
+      st.felder[f.id] = t.value;
+      if (f.std) {
+        if (t.value.trim() === '') st.eigene = st.eigene.filter((x) => x !== f.id);
+        else if (!istEigen(f.id)) st.eigene.push(f.id);
+      }
+      if (['kaufpreis', 'mieteIst', 'verkaufspreisQm', 'zins'].includes(f.id)) szenario = null;
+      aktualisiere();
+    } else if (t.id === 'zvToggle') {
+      st.zv = t.checked;
+      szenario = null;
+      baueFormular();
+      toast(st.zv ? 'Zwangsversteigerung: Makler 0 %, Gericht/Grundbuch 1,5 %, Risikoabzug' : 'Normaler Kauf');
+    } else if (t.dataset.risiko) {
+      st.risiko[t.dataset.risiko] = t.checked;
+      aktualisiere();
+    }
+  });
+  form.addEventListener('focusout', (ev) => {
+    const t = ev.target;
+    if (!t.dataset || !t.dataset.feld) return;
+    const f = FELD[t.dataset.feld];
+    beruehrt.add(f.id);
+    // Geldbeträge hübsch formatieren
+    if (f.id === 'ort') ermittleLage();
+    if (['eur', 'num', 'pct'].includes(f.typ) && (!f.std || istEigen(f.id)) && (st.felder[f.id] || '').trim()) {
+      const n = C.parseZahl(t.value);
+      if (n !== null) { t.value = fmtFeld(f, f.typ === 'pct' ? n / 100 : n); st.felder[f.id] = t.value; }
+    }
+    aktualisiere();
+  });
+  form.addEventListener('click', (ev) => {
+    const id = ev.target.id;
+    if (id === 'btnClaude') { kopiereClaudeAnfrage(); return; }
+    if (id === 'btnAntwortZeigen') { const b = $('#antwortBox'); b.hidden = !b.hidden; if (!b.hidden) $('#claudeAntwort').focus(); return; }
+    if (id === 'btnAntwortUebernehmen') { uebernehmeClaudeAntwort($('#claudeAntwort').value); return; }
+    const r = ev.target.closest('[data-reset]');
+    if (r) {
+      const id = r.dataset.reset;
+      st.eigene = st.eigene.filter((x) => x !== id);
+      delete st.felder[id];
+      if (id === 'zins') szenario = null;
+      aktualisiere();
+      return;
+    }
+    const a = ev.target.closest('[data-art]');
+    if (a) {
+      st.objektart = a.dataset.art;
+      document.querySelectorAll('[data-art]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.art === st.objektart)));
+      aktualisiere();
+    }
+  });
+  // Enter springt zum nächsten Feld
+  form.addEventListener('keydown', (ev) => {
+    if (ev.key !== 'Enter' || ev.target.tagName !== 'INPUT') return;
+    ev.preventDefault();
+    const alle = [...form.querySelectorAll('input:not([type=checkbox]), select')];
+    const i = alle.indexOf(ev.target);
+    if (alle[i + 1]) alle[i + 1].focus(); else ev.target.blur();
+  });
+
+  function setzeModus(modus) {
+    if (st.modus === modus) return;
+    st.modus = modus;
+    szenario = null;
+    baueFormular();
+  }
+  document.querySelectorAll('.seg [data-modus]').forEach((b) => b.addEventListener('click', () => setzeModus(b.dataset.modus)));
+
+  const erg = $('#ergebnis');
+  erg.addEventListener('input', (ev) => {
+    const t = ev.target;
+    if (t.id === 'notiz') { st.notiz = t.value; speichereEntwurf(); return; }
+    if (!t.dataset.sl) return;
+    szenario = Object.assign({}, szenario, { [t.dataset.sl]: Number(t.value) });
+    const r = C.berechne(eingabe(true), st.modus);
+    if (!r.ok) return;
+    letztesErgebnis = r;
+    // Nur Ergebnis neu zeichnen, Fokus auf dem Regler halten
+    const id = t.id;
+    zeigeErgebnis(r, eingabe(false));
+    const neu = document.getElementById(id);
+    if (neu) neu.focus({ preventScroll: true });
+    zeigeStandardwerte(standardWerte(eingabe(false)));
+  });
+  erg.addEventListener('click', (ev) => {
+    const id = ev.target.id;
+    if (id === 'szenReset') { szenario = null; aktualisiere(); }
+    else if (id === 'szenUebernehmen') uebernehmeSzenario();
+    else if (id === 'btnSpeichern') speichern();
+    const w = ev.target.closest('[data-wechsel]');
+    if (w) { setzeModus(w.dataset.wechsel); $('#ergebnis').scrollIntoView(); }
+  });
+
+  function uebernehmeSzenario() {
+    if (!szenario) return;
+    const setze = (fid, wert) => {
+      const f = FELD[fid];
+      st.felder[fid] = fmtFeld(f, wert);
+      if (f.std && !istEigen(fid)) st.eigene.push(fid);
+      const el = $('#f-' + fid);
+      if (el) el.value = st.felder[fid];
+    };
+    if (zahl(szenario.kaufpreis)) setze('kaufpreis', szenario.kaufpreis);
+    if (zahl(szenario.haupt)) setze(st.modus === 'flip' ? 'verkaufspreisQm' : 'mieteIst', szenario.haupt);
+    if (zahl(szenario.zins)) setze('zins', szenario.zins);
+    szenario = null;
+    aktualisiere();
+    toast('Szenario in die Eingabe übernommen');
+  }
+
+  // -------------------------------------------------------------------------
+  // Objektliste, Speichern, Export/Import
+  // -------------------------------------------------------------------------
+  function toast(text) {
+    const t = $('#toast');
+    t.textContent = text;
+    t.classList.add('show');
+    clearTimeout(toast.t);
+    toast.t = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function speichereEntwurf() { schreib(ENTWURF, st); }
+
+  // -------------------------------------------------------------------------
+  // Datenbestand (Objekte, Marktdaten, Löschvermerke) – lokal und optional GitHub
+  // -------------------------------------------------------------------------
+  const BESTAND = 'immoQuickCheck.bestand.v2';
+  const neueId = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  function ladeBestand() {
+    const b = lies(BESTAND, null);
+    return D.normalisiereBestand(b || lies(SPEICHER, [])); // altes Format übernehmen
+  }
+  let bestand = ladeBestand();
+  function sichereBestand(b, abgleichen = true) {
+    bestand = D.normalisiereBestand(b);
+    const ok = schreib(BESTAND, bestand);
+    if (abgleichen) planeAbgleich();
+    return ok;
+  }
+  const marktTreffer = () => D.findeMarktdaten(bestand.marktdaten, {
+    stadt: st.geo && st.geo.stadt, stadtteil: st.geo && st.geo.stadtteil, text: st.felder.ort,
+  });
+
+  function speichern() {
+    const r = letztesErgebnis;
+    if (!r || !r.ok) { toast('Bitte zuerst die Pflichtfelder ausfüllen.'); return; }
+    const basis = st.modus === 'empfehlung' ? null : C.berechne(eingabe(false), st.modus);
+    const emp = st.modus === 'empfehlung' ? C.empfehlung(eingabe(false)) : null;
+    if (!st.id) st.id = neueId('o');
+    const eintrag = {
+      id: st.id,
+      gespeichert: new Date().toISOString(),
+      modus: st.modus,
+      objektart: st.objektart,
+      felder: Object.assign({}, st.felder),
+      eigene: st.eigene.slice(),
+      risiko: Object.assign({}, st.risiko),
+      geo: st.geo,
+      zv: st.zv,
+      notiz: st.notiz || '',
+      ergebnis: emp ? (emp.ok ? { punktzahl: emp.punktzahl, ampel: emp.ampel, begruendung: `Empfehlung: ${emp.titel}. ${emp.text}` } : null)
+        : basis.ok ? { punktzahl: basis.score.punktzahl, ampel: basis.score.ampel, begruendung: basis.score.begruendung } : null,
+    };
+    const b = D.normalisiereBestand(bestand);
+    b.objekte = [eintrag].concat(b.objekte.filter((o) => o.id !== st.id));
+    if (sichereBestand(b)) { toast(ghKonfig() ? 'Gespeichert, wird geteilt …' : 'Gespeichert'); aktualisiere(); }
+    else toast('Speichern nicht möglich (privater Modus oder Speicher voll). Bitte exportieren.');
+  }
+
+  function loescheAusBestand(art, id) {
+    const b = D.normalisiereBestand(bestand);
+    b[art] = b[art].filter((x) => x.id !== id);
+    b.geloescht.push({ id, zeit: new Date().toISOString() });
+    sichereBestand(b);
+  }
+
+  // -------------------------------------------------------------------------
+  // Adresse → Bundesland (OpenStreetMap Nominatim, nur auf Nutzeraktion, mit Cache)
+  // -------------------------------------------------------------------------
+  const GEO_CACHE = 'immoQuickCheck.geocache.v1';
+  let geoLaeuft = false;
+  let letzteGeoAnfrage = 0;
+  async function ermittleLage() {
+    const text = (st.felder.ort || '').trim();
+    if (text.length < 4 || (st.geo && st.geo.text === text)) return;
+    const cache = lies(GEO_CACHE, {});
+    const key = D.normText(text);
+    let geo = cache[key] || null;
+    if (!geo) {
+      geoLaeuft = true;
+      zeigeStandardwerte(standardWerte(eingabe(false)));
+      try {
+        const warte = 1100 - (Date.now() - letzteGeoAnfrage); // höchstens 1 Anfrage pro Sekunde
+        if (warte > 0) await new Promise((r) => setTimeout(r, warte));
+        letzteGeoAnfrage = Date.now();
+        const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&countrycodes=de&accept-language=de&q=' + encodeURIComponent(text);
+        const res = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const treffer = (await res.json())[0];
+        const a = (treffer && treffer.address) || {};
+        geo = {
+          text,
+          bundesland: C.normalisiereBundesland(a.state || ''),
+          stadt: a.city || a.town || a.village || a.municipality || '',
+          stadtteil: a.suburb || a.city_district || a.quarter || '',
+          plz: a.postcode || '',
+        };
+        cache[key] = geo;
+        const keys = Object.keys(cache);
+        if (keys.length > 300) delete cache[keys[0]];
+        schreib(GEO_CACHE, cache);
+      } catch (e) {
+        geoLaeuft = false;
+        toast('Adresssuche nicht erreichbar. Bundesland bitte selbst wählen.');
+        aktualisiere();
+        return;
+      }
+      geoLaeuft = false;
+    }
+    if ((st.felder.ort || '').trim() !== text) return; // inzwischen geändert
+    st.geo = Object.assign({}, geo, { text });
+    if (geo.bundesland && geo.bundesland !== st.felder.bundesland) {
+      st.felder.bundesland = geo.bundesland;
+      const sel = $('#f-bundesland');
+      if (sel) sel.value = geo.bundesland;
+      const satz = C.fmtProzent(C.GRUNDERWERBSTEUER[geo.bundesland], 1);
+      toast(istEigen('grunderwerbsteuer')
+        ? `Bundesland ${geo.bundesland} (${satz}) – eigener Steuersatz bleibt bestehen`
+        : `Bundesland ${geo.bundesland}: Grunderwerbsteuer ${satz}`);
+    }
+    aktualisiere();
+  }
+
+  // -------------------------------------------------------------------------
+  // Marktdaten: Claude-Anfrage, Antwort übernehmen, Tabelle pflegen
+  // -------------------------------------------------------------------------
+  function claudeAnfrage() {
+    const g = st.geo || {};
+    const ort = [st.felder.ort, g.stadtteil && `Stadtteil ${g.stadtteil}`, st.felder.bundesland].filter(Boolean).join(' – ');
+    const objekt = [st.objektart, st.felder.wohnflaeche && `${st.felder.wohnflaeche} m²`, st.felder.baujahr && `Baujahr ${st.felder.baujahr}`,
+      st.felder.effizienzklasse && `Effizienzklasse ${st.felder.effizienzklasse}`,
+      st.zv && `Erwerb über Zwangsversteigerung${st.felder.verkehrswert ? `, Verkehrswert ${st.felder.verkehrswert} €` : ''}`].filter(Boolean).join(', ');
+    return [
+      'Recherchiere bitte Marktdaten für einen Quick-Check (Projekt Immo-Check).',
+      `Lage: ${ort || '(bitte Adresse ergänzen)'}`,
+      `Objekt: ${objekt || '–'}`,
+      'Gesucht:',
+      '1. Marktmiete netto kalt in €/m² (ortsübliche Vergleichsmiete laut Mietspiegel, falls vorhanden, mit Mietspiegelfeld; sonst belastbare Vergleichswerte)',
+      '2. Durchschnittlicher Kaufpreis in €/m² für vergleichbare Bestandsobjekte in dieser Lage',
+      'Jeweils mit Spanne, Quelle und Datum. Angebotsmieten und -preise aus Portalen als solche kennzeichnen. Keine Werte erfinden; wenn nichts Belastbares zu finden ist, „unbekannt“ schreiben.',
+      'Schließe mit genau einer Zeile in diesem Format ab (Zahlen im deutschen Format, ohne Einheit):',
+      `MARKTDATEN; Ort=${g.stadt || '<Stadt>'}; Stadtteil=${g.stadtteil || '<Stadtteil oder –>'}; Miete=<€/m²>; Kaufpreis=<€/m²>; Quelle=<Kurzangabe>; Stand=<JJJJ-MM>`,
+    ].join('\n');
+  }
+  async function kopiereClaudeAnfrage() {
+    const text = claudeAnfrage();
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('Anfrage kopiert – im Claude-Projekt „Immo-Check“ einfügen');
+    } catch (e) {
+      const box = $('#antwortBox');
+      box.hidden = false;
+      const ta = $('#claudeAntwort');
+      ta.value = text;
+      ta.select();
+      toast('Kopieren nicht möglich – Text ist markiert, bitte manuell kopieren');
+    }
+    $('#antwortBox').hidden = false;
+  }
+  function uebernehmeClaudeAntwort(text) {
+    const r = D.leseClaudeMarktdaten(text);
+    if (!r.ok) { toast(r.fehler); return; }
+    const e = Object.assign({ id: neueId('m'), geaendert: new Date().toISOString(), notiz: 'Claude-Recherche' }, r.eintrag);
+    if (!e.datum) e.datum = new Date().toISOString().slice(0, 7);
+    const b = D.normalisiereBestand(bestand);
+    b.marktdaten.push(e);
+    sichereBestand(b);
+    $('#claudeAntwort').value = '';
+    $('#antwortBox').hidden = true;
+    aktualisiere();
+    toast(`Marktdaten für ${e.ort}${e.stadtteil ? ' · ' + e.stadtteil : ''} gespeichert`);
+  }
+
+  function zeigeMarktdaten() {
+    const el = $('#marktInhalt');
+    const liste = bestand.marktdaten;
+    if (!liste.length) { el.innerHTML = '<p class="empty">Noch keine Marktdaten erfasst.</p>'; return; }
+    el.innerHTML = liste.map((m) => `<div class="obj">
+        <button class="open" type="button" data-markt-edit="${esc(m.id)}">
+          <span class="t">${esc(m.ort)}${m.stadtteil ? ' · ' + esc(m.stadtteil) : ''}</span>
+          <span class="m">Miete ${zahl(m.mieteQm) ? C.fmtZahl(m.mieteQm, 2) + ' €/m²' : '–'} · Kauf ${zahl(m.kaufpreisQm) ? C.fmtZahl(m.kaufpreisQm, 0) + ' €/m²' : '–'}</span>
+          <span class="m">${esc([m.quelle, m.datum, m.notiz].filter(Boolean).join(' · '))}</span>
+        </button>
+        <button class="btn small danger" type="button" data-markt-loeschen="${esc(m.id)}" aria-label="Marktdaten ${esc(m.ort)} löschen">Löschen</button>
+      </div>`).join('');
+  }
+  const mFeld = (k) => $('#m-' + k);
+  function leereMarktForm() {
+    for (const k of ['id', 'ort', 'stadtteil', 'miete', 'kauf', 'quelle', 'datum', 'notiz']) mFeld(k).value = '';
+    $('#m-err').textContent = '';
+    mFeld('datum').placeholder = new Date().toISOString().slice(0, 7);
+  }
+  $('#btnMarktLeeren').addEventListener('click', leereMarktForm);
+  $('#btnMarktSpeichern').addEventListener('click', () => {
+    const v = (k) => mFeld(k).value.trim();
+    const miete = C.parseZahl(v('miete'));
+    const kauf = C.parseZahl(v('kauf'));
+    let fehler = '';
+    if (!v('ort')) fehler = 'Bitte den Ort eingeben.';
+    else if (miete === null && kauf === null) fehler = 'Bitte Marktmiete oder Kaufpreis eingeben.';
+    else if ((miete !== null && miete <= 0) || (kauf !== null && kauf <= 0)) fehler = 'Werte müssen größer als 0 sein.';
+    else if ((v('miete') && miete === null) || (v('kauf') && kauf === null)) fehler = 'Bitte gültige Zahlen eingeben.';
+    else if (!v('quelle')) fehler = 'Bitte eine Quelle angeben (keine Marktdaten ohne Quelle).';
+    $('#m-err').textContent = fehler;
+    if (fehler) return;
+    const eintrag = {
+      id: v('id') || neueId('m'), geaendert: new Date().toISOString(),
+      ort: v('ort'), stadtteil: v('stadtteil'), mieteQm: miete, kaufpreisQm: kauf,
+      quelle: v('quelle'), datum: v('datum') || new Date().toISOString().slice(0, 7), notiz: v('notiz'),
+    };
+    const b = D.normalisiereBestand(bestand);
+    b.marktdaten = b.marktdaten.filter((m) => m.id !== eintrag.id).concat(eintrag);
+    sichereBestand(b);
+    leereMarktForm();
+    zeigeMarktdaten();
+    aktualisiere();
+    toast('Marktdaten gespeichert');
+  });
+  $('#marktInhalt').addEventListener('click', (ev) => {
+    const e = ev.target.closest('[data-markt-edit]');
+    const d = ev.target.closest('[data-markt-loeschen]');
+    if (e) {
+      const m = bestand.marktdaten.find((x) => x.id === e.dataset.marktEdit);
+      if (!m) return;
+      mFeld('id').value = m.id; mFeld('ort').value = m.ort; mFeld('stadtteil').value = m.stadtteil || '';
+      mFeld('miete').value = zahl(m.mieteQm) ? C.fmtZahl(m.mieteQm, 2) : ''; mFeld('kauf').value = zahl(m.kaufpreisQm) ? C.fmtZahl(m.kaufpreisQm, 0) : '';
+      mFeld('quelle').value = m.quelle || ''; mFeld('datum').value = m.datum || ''; mFeld('notiz').value = m.notiz || '';
+      mFeld('ort').focus();
+    } else if (d) {
+      const m = bestand.marktdaten.find((x) => x.id === d.dataset.marktLoeschen);
+      if (!m || !confirm(`Marktdaten „${m.ort}${m.stadtteil ? ' · ' + m.stadtteil : ''}“ löschen?`)) return;
+      loescheAusBestand('marktdaten', m.id);
+      zeigeMarktdaten();
+      aktualisiere();
+    }
+  });
+  function ladeHerunter(name, inhalt, typ) {
+    const url = URL.createObjectURL(new Blob([inhalt], { type: typ }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  $('#btnMarktMd').addEventListener('click', () => {
+    ladeHerunter('06_Marktdaten_Region.md', D.marktdatenMarkdown(bestand.marktdaten, new Date().toLocaleDateString('de-DE')), 'text/markdown');
+  });
+
+  // -------------------------------------------------------------------------
+  // GitHub: gemeinsame Datei im privaten Repository
+  // -------------------------------------------------------------------------
+  const GH_KEY = 'immoQuickCheck.github.v1';
+  const ghKonfig = () => { const c = lies(GH_KEY, null); return c && c.repo && c.token ? c : null; };
+  const sync = { zustand: 'aus', meldung: '', zeit: null, laeuft: false, nochmal: false, timer: null };
+
+  function zeigeSyncStatus() {
+    const cfg = ghKonfig();
+    const dot = $('#syncDot');
+    const el = $('#syncStatus');
+    dot.hidden = !cfg;
+    dot.className = 'dot' + (sync.zustand === 'laeuft' ? ' laeuft' : sync.zustand === 'fehler' ? ' fehler' : '');
+    el.classList.toggle('fehler', sync.zustand === 'fehler');
+    if (!cfg) el.textContent = 'Nur auf diesem Gerät gespeichert. Unter „Teilen“ kannst du die Liste mit deinem Partner teilen.';
+    else if (sync.zustand === 'laeuft') el.textContent = `Abgleich mit ${cfg.repo} …`;
+    else if (sync.zustand === 'fehler') el.textContent = `Abgleich fehlgeschlagen: ${sync.meldung} Lokal ist alles gespeichert.`;
+    else if (sync.zeit) el.textContent = `Geteilt über ${cfg.repo} · zuletzt abgeglichen ${sync.zeit.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}`;
+    else el.textContent = `Geteilt über ${cfg.repo}`;
+    $('#btnListe').setAttribute('aria-label', cfg ? `Daten, Abgleich: ${el.textContent}` : 'Daten');
+  }
+
+  function b64encode(text) {
+    const bytes = new TextEncoder().encode(text);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  }
+  function b64decode(b64) {
+    const bin = atob(String(b64).replace(/\s/g, ''));
+    return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
+  }
+  async function gh(cfg, pfad, optionen = {}) {
+    const res = await fetch('https://api.github.com' + pfad, Object.assign({}, optionen, {
+      cache: 'no-store',
+      headers: Object.assign({
+        Accept: 'application/vnd.github+json',
+        Authorization: 'Bearer ' + cfg.token,
+        'X-GitHub-Api-Version': '2022-11-28',
+      }, optionen.body ? { 'Content-Type': 'application/json' } : {}),
+    }));
+    let daten = null;
+    try { daten = await res.json(); } catch (e) { /* leer */ }
+    return { status: res.status, ok: res.ok, daten };
+  }
+  const repoPfad = (cfg) => '/repos/' + cfg.repo.split('/').map(encodeURIComponent).join('/');
+  const dateiPfad = (cfg) => `${repoPfad(cfg)}/contents/${(cfg.pfad || 'daten.json').split('/').map(encodeURIComponent).join('/')}`;
+  function ghFehler(status) {
+    if (status === 401) return 'Token ungültig oder abgelaufen.';
+    if (status === 403) return 'Keine Berechtigung. Token braucht „Contents: Read and write“ für dieses Repository (bei einer Organisation ggf. Freigabe durch den Inhaber).';
+    if (status === 404) return 'Repository nicht gefunden oder kein Zugriff mit diesem Token.';
+    return `GitHub antwortet mit Fehler ${status}.`;
+  }
+
+  async function holeRemote(cfg) {
+    const branch = encodeURIComponent(cfg.branch || 'main');
+    const r = await gh(cfg, `${dateiPfad(cfg)}?ref=${branch}`);
+    if (r.status === 404) {
+      const repo = await gh(cfg, repoPfad(cfg));
+      if (!repo.ok) throw new Error(ghFehler(repo.status));
+      return { bestand: D.leererBestand(), sha: null }; // Datei gibt es noch nicht
+    }
+    if (!r.ok) throw new Error(ghFehler(r.status));
+    let inhalt = r.daten.content;
+    if (!inhalt && r.daten.sha) { // große Datei: über die Blob-Schnittstelle laden
+      const blob = await gh(cfg, `${repoPfad(cfg)}/git/blobs/${r.daten.sha}`);
+      if (!blob.ok) throw new Error(ghFehler(blob.status));
+      inhalt = blob.daten.content;
+    }
+    let json;
+    try { json = JSON.parse(b64decode(inhalt || '')); } catch (e) { throw new Error('Die Datei im Repository ist kein gültiger Datenbestand.'); }
+    return { bestand: D.normalisiereBestand(json), sha: r.daten.sha };
+  }
+
+  async function abgleichen() {
+    const cfg = ghKonfig();
+    if (!cfg) { sync.zustand = 'aus'; zeigeSyncStatus(); return; }
+    if (sync.laeuft) { sync.nochmal = true; return; }
+    sync.laeuft = true;
+    sync.zustand = 'laeuft';
+    zeigeSyncStatus();
+    try {
+      let fertig = false;
+      for (let versuch = 0; versuch < 3 && !fertig; versuch++) {
+        const remote = await holeRemote(cfg);
+        const zusammen = D.fuehreZusammen(bestand, remote.bestand);
+        sichereBestand(zusammen, false);
+        if (remote.sha && D.gleicherBestand(zusammen, remote.bestand)) { fertig = true; break; }
+        const body = {
+          message: `Immo-Quick-Check: ${zusammen.objekte.length} Objekte, ${zusammen.marktdaten.length} Marktdaten`,
+          content: b64encode(JSON.stringify(Object.assign({ app: 'immo-quick-check' }, zusammen), null, 1)),
+          branch: cfg.branch || 'main',
+        };
+        if (remote.sha) body.sha = remote.sha;
+        const w = await gh(cfg, dateiPfad(cfg), { method: 'PUT', body: JSON.stringify(body) });
+        if (w.ok) fertig = true;
+        else if (w.status !== 409 && w.status !== 422) throw new Error(ghFehler(w.status));
+        // 409/422: jemand anderes hat zwischendurch gespeichert → neu laden und zusammenführen
+      }
+      if (!fertig) throw new Error('Die Datei wurde gleichzeitig geändert. Bitte erneut abgleichen.');
+      sync.zustand = 'ok';
+      sync.zeit = new Date();
+      sync.meldung = '';
+    } catch (e) {
+      sync.zustand = 'fehler';
+      sync.meldung = e instanceof TypeError ? 'Keine Verbindung (offline?).' : e.message;
+    } finally {
+      sync.laeuft = false;
+      zeigeSyncStatus();
+      if ($('#liste').open) { zeigeListe(); zeigeMarktdaten(); }
+      aktualisiere();
+      if (sync.nochmal) { sync.nochmal = false; abgleichen(); }
+    }
+  }
+  function planeAbgleich() {
+    if (!ghKonfig()) return;
+    clearTimeout(sync.timer);
+    sync.timer = setTimeout(abgleichen, 800);
+  }
+
+  function fuelleGhForm() {
+    const c = lies(GH_KEY, {}) || {};
+    $('#gh-repo').value = c.repo || '';
+    $('#gh-branch').value = c.branch || '';
+    $('#gh-pfad').value = c.pfad || '';
+    $('#gh-token').value = c.token ? '••••••••' : '';
+  }
+  $('#btnGhVerbinden').addEventListener('click', () => {
+    const alt = lies(GH_KEY, {}) || {};
+    const repo = $('#gh-repo').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
+    const tokenFeld = $('#gh-token').value.trim();
+    const token = tokenFeld === '••••••••' ? alt.token : tokenFeld;
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { toast('Repository bitte als „besitzer/name“ eingeben.'); return; }
+    if (!token) { toast('Bitte einen Token eintragen.'); return; }
+    const pfad = $('#gh-pfad').value.trim().replace(/^\/+/, '') || 'daten.json';
+    if (!/\.json$/i.test(pfad)) { toast('Die Datei muss auf .json enden.'); return; }
+    schreib(GH_KEY, { repo, token, branch: $('#gh-branch').value.trim() || 'main', pfad });
+    fuelleGhForm();
+    abgleichen();
+  });
+  $('#btnGhJetzt').addEventListener('click', abgleichen);
+  $('#btnGhTrennen').addEventListener('click', () => {
+    if (!confirm('Teilen auf diesem Gerät beenden? Der Token wird hier gelöscht, die Daten bleiben lokal und im Repository erhalten.')) return;
+    try { localStorage.removeItem(GH_KEY); } catch (e) { /* egal */ }
+    sync.zustand = 'aus';
+    fuelleGhForm();
+    zeigeSyncStatus();
+  });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') planeAbgleich(); });
+
+  // -------------------------------------------------------------------------
+  // Fenster „Daten“: Objekte, Marktdaten, Teilen
+  // -------------------------------------------------------------------------
+  function zeigeTab(tab) {
+    document.querySelectorAll('#liste [data-tab]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tab === tab)));
+    document.querySelectorAll('#liste [data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== tab; });
+    if (tab === 'objekte') zeigeListe();
+    if (tab === 'markt') { zeigeMarktdaten(); if (!mFeld('id').value && !mFeld('ort').value) { leereMarktForm(); if (st.geo && st.geo.stadt) { mFeld('ort').value = st.geo.stadt; mFeld('stadtteil').value = st.geo.stadtteil || ''; } } }
+    if (tab === 'teilen') fuelleGhForm();
+  }
+  document.querySelectorAll('#liste [data-tab]').forEach((b) => b.addEventListener('click', () => zeigeTab(b.dataset.tab)));
+
+  function zeigeListe() {
+    const liste = bestand.objekte;
+    const el = $('#listeInhalt');
+    if (!liste.length) { el.innerHTML = '<p class="empty">Noch keine Objekte gespeichert.</p>'; return; }
+    el.innerHTML = liste.map((o) => {
+      const e = o.ergebnis;
+      const datum = new Date(o.gespeichert);
+      const d = isNaN(datum) ? '' : datum.toLocaleDateString('de-DE');
+      const badge = e ? `<span class="badge a-${esc(e.ampel)}">${AMPEL_SYMBOL[e.ampel] || ''} ${esc(e.punktzahl)}</span>` : '';
+      return `<div class="obj">${badge}
+        <button class="open" type="button" data-laden="${esc(o.id)}">
+          <span class="t">${esc((o.felder && o.felder.name) || 'Ohne Namen')}</span>
+          <span class="m">${esc([o.modus === 'flip' ? 'Fix & Flip' : o.modus === 'empfehlung' ? 'Empfehlung' : 'Vermietung', o.zv && 'Zwangsversteigerung', o.felder && o.felder.ort, d].filter(Boolean).join(' · '))}</span>
+          ${e ? `<span class="m">${esc(e.begruendung)}</span>` : ''}
+          ${o.notiz ? `<span class="m">Notiz: ${esc(o.notiz)}</span>` : ''}
+        </button>
+        <button class="btn small danger" type="button" data-loeschen="${esc(o.id)}" aria-label="${esc((o.felder && o.felder.name) || 'Objekt')} löschen">Löschen</button>
+      </div>`;
+    }).join('');
+  }
+
+  function laden(obj) {
+    const felder = Object.assign({ bundesland: 'Sachsen-Anhalt' }, obj.felder);
+    if (!C.GRUNDERWERBSTEUER[felder.bundesland]) felder.bundesland = 'Sachsen-Anhalt';
+    st = Object.assign(LEER(), {
+      id: obj.id || null,
+      modus: ['flip', 'empfehlung'].includes(obj.modus) ? obj.modus : 'vermietung',
+      objektart: obj.objektart === 'MFH' ? 'MFH' : 'ETW',
+      felder,
+      eigene: Array.isArray(obj.eigene) ? obj.eigene.filter((x) => FELD[x]) : [],
+      risiko: Object.assign({}, obj.risiko),
+      geo: obj.geo && typeof obj.geo === 'object' ? obj.geo : null,
+      notiz: obj.notiz || '',
+      zv: obj.zv === true,
+    });
+    szenario = null;
+    beruehrt.clear();
+    baueFormular();
+  }
+
+  $('#btnListe').addEventListener('click', () => { zeigeTab('objekte'); zeigeSyncStatus(); $('#liste').showModal(); planeAbgleich(); });
+  $('#btnSchliessen').addEventListener('click', () => $('#liste').close());
+  $('#btnNeu').addEventListener('click', () => {
+    if (!confirm('Neues Objekt beginnen? Nicht gespeicherte Eingaben gehen verloren.')) return;
+    const modus = st.modus;
+    st = LEER();
+    st.modus = modus;
+    szenario = null;
+    beruehrt.clear();
+    baueFormular();
+    window.scrollTo({ top: 0 });
+  });
+  $('#listeInhalt').addEventListener('click', (ev) => {
+    const l = ev.target.closest('[data-laden]');
+    const d = ev.target.closest('[data-loeschen]');
+    if (l) {
+      const o = bestand.objekte.find((x) => x.id === l.dataset.laden);
+      if (o) { laden(o); $('#liste').close(); window.scrollTo({ top: 0 }); toast('Objekt geladen'); }
+    } else if (d) {
+      const o = bestand.objekte.find((x) => x.id === d.dataset.loeschen);
+      if (!o || !confirm(`„${(o.felder && o.felder.name) || 'Ohne Namen'}“ wirklich löschen?${ghKonfig() ? ' Es wird auch für deinen Partner gelöscht.' : ''}`)) return;
+      loescheAusBestand('objekte', o.id);
+      if (st.id === o.id) st.id = null;
+      zeigeListe();
+    }
+  });
+
+  $('#btnExport').addEventListener('click', () => {
+    const daten = Object.assign({ app: 'immo-quick-check', exportiert: new Date().toISOString() }, bestand);
+    ladeHerunter(`immo-quick-check-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(daten, null, 2), 'application/json');
+  });
+  $('#btnImport').addEventListener('click', () => $('#importFile').click());
+  $('#importFile').addEventListener('change', async (ev) => {
+    const datei = ev.target.files && ev.target.files[0];
+    ev.target.value = '';
+    if (!datei) return;
+    try {
+      const roh = JSON.parse(await datei.text());
+      const neu = D.normalisiereBestand(roh);
+      if (!neu.objekte.length && !neu.marktdaten.length) throw new Error('Format');
+      const vorher = bestand.objekte.length;
+      if (!sichereBestand(D.fuehreZusammen(bestand, neu))) throw new Error('Speicher');
+      zeigeListe();
+      toast(`Import: ${bestand.objekte.length - vorher} neue Objekte, ${neu.marktdaten.length} Marktdaten geprüft`);
+    } catch (e) {
+      toast(e.message === 'Speicher' ? 'Import nicht gespeichert: lokaler Speicher nicht verfügbar.' : 'Die Datei ist kein gültiges Backup des Immo-Quick-Checks.');
+    }
+  });
+
+  // -------------------------------------------------------------------------
+  // Start
+  // -------------------------------------------------------------------------
+  if (lies(BESTAND, null) === null && bestand.objekte.length) schreib(BESTAND, bestand); // Umstieg vom alten Speicherformat
+  const entwurf = lies(ENTWURF, null);
+  if (entwurf && entwurf.felder) laden(entwurf);
+  else baueFormular();
+  zeigeSyncStatus();
+  planeAbgleich();
+})();
+</script>
+</body>
+</html>
