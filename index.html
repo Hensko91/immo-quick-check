@@ -18,8 +18,8 @@
 <style>
 :root {
   --bg: #eaf0ee;
-  --bg-glow-1: rgba(20, 184, 166, .22);
-  --bg-glow-2: rgba(99, 102, 241, .14);
+  --bg-glow-1: rgba(20, 184, 166, .32);
+  --bg-glow-2: rgba(99, 102, 241, .2);
   --card: rgba(255, 255, 255, .72);
   --card-solid: #ffffff;
   --card-border: rgba(255, 255, 255, .9);
@@ -98,16 +98,20 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--text);
-  background:
-    radial-gradient(900px 600px at 110% -10%, var(--bg-glow-1), transparent 60%),
-    radial-gradient(700px 500px at -20% 30%, var(--bg-glow-2), transparent 60%),
-    radial-gradient(800px 600px at 120% 90%, var(--bg-glow-1), transparent 60%),
-    var(--bg);
-  background-attachment: fixed;
+  background: transparent; /* Hintergrund liefert html bzw. body::before */
   font: 16px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
   letter-spacing: -0.005em;
   padding-bottom: calc(32px + env(safe-area-inset-bottom));
   -webkit-font-smoothing: antialiased;
+}
+/* Farbschimmer als fest stehende Ebene: iOS Safari unterstützt background-attachment: fixed nicht */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(120vw 80vh at 105% -5%, var(--bg-glow-1), transparent 62%),
+    radial-gradient(110vw 70vh at -15% 45%, var(--bg-glow-2), transparent 62%),
+    radial-gradient(120vw 80vh at 110% 105%, var(--bg-glow-1), transparent 62%),
+    var(--bg);
 }
 button, input, select, textarea { font: inherit; color: inherit; }
 a { color: var(--accent); }
@@ -241,8 +245,15 @@ details.card:not([open]) > summary { margin-bottom: 0; }
 
 table.kz { width: 100%; border-collapse: collapse; font-size: 15px; margin-bottom: 8px; }
 table.kz th { text-align: left; font-weight: 450; color: var(--muted); padding: 9px 8px 9px 0; vertical-align: top; }
-table.kz td { text-align: right; font-weight: 650; padding: 9px 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.kz { table-layout: fixed; }
+table.kz td { width: 42%; text-align: right; font-weight: 650; padding: 9px 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 table.kz tr + tr { border-top: 1px solid var(--line); }
+table.kz tr.erkl { border-top: 0; }
+table.kz tr.erkl td { text-align: left; white-space: normal; font-weight: 450; font-size: 12.5px; color: var(--muted); padding: 0 0 10px; }
+.info { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; margin-left: 4px; border-radius: 50%; border: 1.5px solid var(--muted); background: none; color: var(--muted); font: italic 700 11px/1 Georgia, serif; cursor: pointer; vertical-align: 1px; padding: 0; }
+.info[aria-expanded="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.info::before { content: ""; position: absolute; inset: -12px; }
+.info { position: relative; }
 table.kz tr.main td, table.kz tr.main th { font-size: 17px; color: var(--text); font-weight: 750; }
 
 .gebot { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
@@ -267,6 +278,15 @@ table.kz tr.main td, table.kz tr.main th { font-size: 17px; color: var(--text); 
 .slider input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--card-solid); border: 3px solid var(--accent); }
 .slider input[type=range]:focus-visible { outline: none; }
 .slider input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 6px var(--accent-soft); }
+.slkopf { display: flex; flex-direction: column; gap: 6px; margin-bottom: 2px; }
+.slkopf label { display: block; margin: 0; font-size: 14px; font-weight: 650; }
+.slctl { display: flex; align-items: center; gap: 8px; }
+.slin { flex: 1; }
+.slin input { min-height: 40px; font-size: 16px; text-align: right; padding: 0 4px 0 8px; font-weight: 700; color: var(--accent); }
+.slin .unit { padding: 0 8px 0 2px; font-size: 13px; }
+.stepbtn { width: 40px; height: 40px; flex: none; border-radius: 12px; border: 0; background: var(--field); color: var(--text); font-size: 22px; font-weight: 700; line-height: 1; cursor: pointer; }
+.stepbtn:active { background: var(--accent-soft); }
+.szenario-hint[hidden] { display: none; }
 .szenario-hint { font-size: 13px; color: var(--own-text); background: var(--own); border-radius: 14px; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .emp-titel { font-size: 22px; font-weight: 800; margin: 0 0 4px; line-height: 1.2; letter-spacing: -0.02em; }
@@ -324,7 +344,7 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
 <header class="top">
   <div class="wrap">
     <div class="toprow">
-      <h1><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3.5 11 12 4l8.5 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 9.5V20h12V9.5" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="2.2" fill="#fde047"/></svg></span>Immo-Quick-Check</h1>
+      <h1><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3.5 11 12 4l8.5 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 9.5V20h12V9.5" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><path d="M9.4 11.2v6.3M14.6 11.2v6.3M9.4 14.35h5.2" stroke="#fde047" stroke-width="2" stroke-linecap="round"/></svg></span>Immo-Quick-Check</h1>
       <button class="btn small" id="btnNeu" type="button">Neu</button>
       <button class="btn small" id="btnListe" type="button">Daten<span class="dot" id="syncDot" hidden></span></button>
     </div>
@@ -427,8 +447,8 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
 
 <div class="toast" id="toast" role="status"></div>
 
-<script src="calc.js"></script>
-<script src="daten.js"></script>
+<script src="calc.js?v=2026-10-03e"></script>
+<script src="daten.js?v=2026-10-03e"></script>
 <script>
 'use strict';
 (function () {
@@ -454,10 +474,11 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
     { id: 'baujahr', sek: 'eck', label: 'Baujahr', typ: 'jahr' },
     { id: 'mieteIst', sek: 'eck', modus: 'vermietung', label: 'Nettokaltmiete Ist', typ: 'eur', einheit: '€/Monat', pflicht: true, wide: true, hilfe: 'laut Mietvertrag; bei Leerstand Marktmiete' },
     { id: 'hausgeld', sek: 'eck', modus: 'vermietung', label: 'Hausgeld bzw. Bewirtschaftungskosten gesamt', typ: 'eur', einheit: '€/Monat', pflicht: true, wide: true },
+    { id: 'wohnlage', sek: 'eck', modus: 'vermietung', nurMietspiegel: true, label: 'Wohnlage laut Mietspiegel', typ: 'select', optionen: ['', 'A', 'B', 'C', 'D'], optionTexte: { '': 'unbekannt (D angenommen)', A: 'A (+15 %)', B: 'B (+10 %)', C: 'C (+5 %)', D: 'D (± 0 %)' }, wide: true, hilfe: 'laut Wohnlagenkarte der Stadt Halle (Saale)' },
     { id: 'marktmieteQm', sek: 'eck', modus: 'vermietung', label: 'Marktmiete', typ: 'num', einheit: '€/m²', markt: 'mieteQm', hilfe: 'Mietspiegel oder Recherche' },
     { id: 'marktpreisQm', sek: 'eck', modus: 'vermietung', label: 'Marktpreis', typ: 'num', einheit: '€/m²', markt: 'kaufpreisQm', hilfe: 'Kaufpreis je m² vergleichbarer Objekte' },
     { id: 'sanierung', sek: 'eck', modus: 'flip', label: 'Sanierungskosten', typ: 'eur', einheit: '€', pflicht: true, wide: true, hilfe: 'Schätzung oder Angebot' },
-    { id: 'verkaufspreisQm', sek: 'eck', modus: 'flip', label: 'Erwarteter Verkaufspreis', typ: 'num', einheit: '€/m²', pflicht: true, wide: true, hilfe: 'Vergleichspreise sanierter Objekte, keine Wunschwerte' },
+    { id: 'verkaufspreis', sek: 'eck', modus: 'flip', label: 'Erwarteter Verkaufspreis', typ: 'eur', einheit: '€', pflicht: true, wide: true, hilfe: 'Gesamtpreis nach Sanierung; Vergleichspreise, keine Wunschwerte' },
     { id: 'haltekosten', sek: 'eck', modus: 'flip', label: 'Laufende Haltekosten', typ: 'eur', einheit: '€/Monat', wide: true, hilfe: 'Hausgeld, Grundsteuer, Versicherung, Energie bei Leerstand' },
     { id: 'effizienzklasse', sek: 'eck', label: 'Energieeffizienzklasse', typ: 'select', optionen: ['', 'A+', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], wide: true },
 
@@ -515,7 +536,7 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
   const schreib = (key, wert) => { try { localStorage.setItem(key, JSON.stringify(wert)); return true; } catch (e) { return false; } };
 
   const istEigen = (id) => st.eigene.includes(id);
-  const sichtbar = (f) => (!f.zv || st.zv) && (!f.modus || f.modus === '*' || st.modus === 'empfehlung' || f.modus === st.modus);
+  const sichtbar = (f) => (!f.zv || st.zv) && (!f.nurMietspiegel || mietspiegelSichtbar()) && (!f.modus || f.modus === '*' || st.modus === 'empfehlung' || f.modus === st.modus);
   const lbl = (f) => (st.zv && f.zvLabel) || f.label;
   const hilfe = (f) => (st.zv && f.zvHilfe) || f.hilfe || '';
   const risikenAktuell = () => (st.modus === 'empfehlung' ? RISIKEN.vermietung.concat(RISIKEN.flip) : RISIKEN[st.modus])
@@ -563,14 +584,16 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
       if (f.std && !istEigen(f.id)) { e[f.id] = null; continue; }
       e[f.id] = parseFeld(f, st.felder[f.id]);
       if (f.markt && e[f.id] === null && !(st.felder[f.id] || '').trim()) {
-        const t = marktTreffer();
-        if (t && zahl(t[f.markt])) e[f.id] = t[f.markt];
+        const ms = f.markt === 'mieteQm' ? mietspiegelWert() : null;
+        const t = ms ? null : marktTreffer(f.markt);
+        if (ms) e[f.id] = ms.mieteQm;
+        else if (t && zahl(t[f.markt])) e[f.id] = t[f.markt];
       }
     }
     if (mitSzenario && szenario) {
       if (zahl(szenario.kaufpreis)) e.kaufpreis = szenario.kaufpreis;
       if (zahl(szenario.zins)) e.zins = szenario.zins;
-      if (zahl(szenario.haupt)) e[st.modus === 'flip' ? 'verkaufspreisQm' : 'mieteIst'] = szenario.haupt;
+      if (zahl(szenario.haupt)) e[st.modus === 'flip' ? 'verkaufspreis' : 'mieteIst'] = szenario.haupt;
     }
     return e;
   }
@@ -683,13 +706,20 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
       } else if (f.markt) {
         const el = $('#f-' + f.id);
         const eigen = (st.felder[f.id] || '').trim();
-        const t = eigen ? null : marktTreffer();
+        const ms = !eigen && f.markt === 'mieteQm' ? mietspiegelWert() : null;
+        const t = eigen || ms ? null : marktTreffer(f.markt);
         const hint = $('#f-' + f.id + '-hint');
-        if (t && zahl(t[f.markt])) {
+        const pz = (x) => `${x >= 0 ? '+' : '−'}${C.fmtZahl(Math.abs(x) * 100, 0)} %`;
+        if (ms) {
+          if (document.activeElement !== el) el.value = fmtFeld(f, ms.mieteQm);
+          wrap.classList.add('is-std');
+          tag.innerHTML = '<span class="chip">Mietspiegel</span>';
+          hint.textContent = `${ms.quelle}: Basis ${C.fmtZahl(ms.basis, 2)} € ${pz(ms.zBaujahr)} Baujahr ${pz(ms.zLage)} Lage ${ms.wohnlage}${ms.wohnlageAnnahme ? ' (Annahme)' : ''}; Spanne ${C.fmtZahl(ms.von, 2)}–${C.fmtZahl(ms.bis, 2)} €. Ohne Ausstattungsmerkmale.`;
+        } else if (t && zahl(t[f.markt])) {
           if (document.activeElement !== el) el.value = fmtFeld(f, t[f.markt]);
           wrap.classList.add('is-std');
-          tag.innerHTML = '<span class="chip">Marktdaten</span>';
-          hint.textContent = [t.ort + (t.stadtteil ? ' · ' + t.stadtteil : ''), t.quelle, t.datum].filter(Boolean).join(' · ');
+          tag.innerHTML = `<span class="chip">${t.referenz ? 'Amtlich' : 'Marktdaten'}</span>`;
+          hint.textContent = [t.ort + (t.stadtteil ? ' · ' + t.stadtteil : ''), t.notiz && t.referenz ? t.notiz : '', t.quelle, t.datum].filter(Boolean).join(' · ');
         } else {
           if (!eigen && document.activeElement !== el) el.value = '';
           wrap.classList.remove('is-std');
@@ -702,7 +732,7 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
         if (geoLaeuft) hint.textContent = 'Adresse wird gesucht …';
         else if (g && g.text === (st.felder.ort || '').trim()) {
           hint.innerHTML = g.bundesland
-            ? `${esc([g.stadt, g.stadtteil, g.bundesland].filter(Boolean).join(' · '))} <span class="sub">· Adresssuche <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></span>`
+            ? `${esc([g.stadt, g.stadtteil, g.kreis, g.bundesland].filter(Boolean).join(' · '))} <span class="sub">· Adresssuche <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></span>`
             : 'Adresse nicht gefunden – Bundesland bitte unter „Weitere Annahmen“ wählen.';
         } else hint.textContent = hilfe(f);
       } else if (f.id === 'bundesland') {
@@ -743,6 +773,7 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
   // Berechnen und Ergebnis anzeigen
   // -------------------------------------------------------------------------
   function aktualisiere() {
+    if (sichtbar(FELD.wohnlage) !== !!$('#f-wohnlage')) { baueFormular(); return; }
     const pf = parseFehler();
     const basisEingabe = eingabe(false);
     const werte = standardWerte(basisEingabe);
@@ -769,7 +800,34 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
 
   const AMPEL_SYMBOL = { gruen: '●', gelb: '▲', rot: '■' };
 
-  function zeigeErgebnis(r, basis) {
+  /** Kurze Erklärungen zu den Kennzahlen (Formeln aus wissen/01_Rechenregeln.md). */
+  const ERKLAERUNG = {
+    'Cashflow nach Steuern / Monat': 'Was nach Kreditrate, nicht umlagefähigen Kosten, Rücklage und Steuerwirkung (inkl. Erstattung) pro Monat übrig bleibt. Hauptkennzahl, Ziel 50–80 €.',
+    'Cashflow vor Steuern / Monat': 'Reinertrag minus Kreditrate, ohne Steuereffekt. Zeigt, ob das Objekt sich ohne Steuererstattung trägt.',
+    'Monatliche Belastung': 'Alles, was du monatlich zahlst, bevor Miete eingeht: Kreditrate (Zins + Tilgung) plus nicht umlagefähige Kosten plus eigene Rücklage. Bei Fix & Flip: Kreditzinsen plus laufende Haltekosten.',
+    'davon Kreditrate (Zins + Tilgung)': 'Kapitaldienst ÷ 12 = Darlehen × (Sollzins + Anfangstilgung) ÷ 12. Bleibt über die Zinsbindung konstant.',
+    'Mieteinnahmen / Monat (nach Leerstand)': 'Nettokaltmiete abzüglich der angenommenen Mietausfall- und Leerstandsquote.',
+    'Kaufpreisfaktor': 'Kaufpreis ÷ Jahresnettokaltmiete: Wie viele Jahresmieten kostet das Objekt? Je niedriger, desto günstiger. Im Scoring: 16 oder weniger volle Punkte, 28 oder mehr keine Punkte.',
+    'Bruttomietrendite': 'Jahresnettokaltmiete ÷ Kaufpreis. Gut für den schnellen Exposé-Vergleich, ohne Nebenkosten und Bewirtschaftung.',
+    'Nettomietrendite': 'Reinertrag (Miete nach Leerstand minus nicht umlagefähige Kosten und Rücklage) ÷ Gesamtinvestition inkl. Nebenkosten. Die echte Objektrendite vor Finanzierung.',
+    'Kapitaldienstdeckung (DSCR)': 'Reinertrag ÷ Kreditrate pro Jahr. Unter 1,0 deckt die Miete die Rate nicht – Bankperspektive.',
+    'Eigenkapitalrendite': '(Cashflow nach Steuern + Tilgung im 1. Jahr) ÷ eingesetztes Eigenkapital.',
+    'Break-even-Miete / Monat': 'Monatsmiete, bei der der Cashflow vor Steuern genau 0 ist. Je weiter die Ist-Miete darüber liegt, desto größer der Puffer.',
+    'Sondertilgungspotenzial / Jahr': 'Positiver Cashflow nach Steuern pro Jahr, der für Sondertilgungen frei wäre – sofern der Darlehensvertrag sie erlaubt.',
+    'Reinertrag (NOI) / Jahr': 'Miete nach Leerstand minus nicht umlagefähige Kosten minus eigene Rücklage, ohne Finanzierung.',
+    'AfA / Jahr': 'Abschreibung: (Kaufpreis + Nebenkosten) × Gebäudeanteil × AfA-Satz. Mindert die Steuer, nicht die Liquidität.',
+    'Marge auf Verkaufspreis': 'Gewinn vor Steuern ÷ Verkaufserlös. Hauptkennzahl beim Flip, Ziel ab 15 %, unter 8 % K.-o.',
+    'Rendite auf Gesamtkosten': 'Gewinn vor Steuern ÷ alle Kosten (Kauf, Nebenkosten, Sanierung, Finanzierung, Halten, Verkauf).',
+    'Eigenkapitalrendite p. a.': 'Gewinn nach Steuern ÷ Eigenkapital, auf ein Jahr hochgerechnet. Durch den Kredithebel oft sehr hoch – darum im Scoring erst ab 100 % volle Punkte.',
+    'Preispuffer': 'Um wie viel Prozent der Verkaufspreis fallen darf, bis der Gewinn 0 ist.',
+    'Stresstest (VK −10 %, San. +20 %, +3 Mon.)': 'Gewinn vor Steuern, wenn gleichzeitig der Verkaufspreis 10 % niedriger, die Sanierung 20 % teurer und die Haltedauer 3 Monate länger ist. Sollte mindestens 0 sein.',
+    '70-%-Regel: max. Kaufpreis': 'US-Faustregel: Verkaufserlös × 70 % minus Sanierung. Wegen höherer Nebenkosten in Deutschland nur als Obergrenze nutzen.',
+    'Gebot / Verkehrswert': 'Im ersten Termin: unter 50 % wird der Zuschlag versagt, unter 70 % kann ein Gläubiger die Versagung beantragen.',
+    'Sicherheitsleistung (10 % VW)': 'Muss beim Bieten sofort nachgewiesen werden (Überweisung, Bankbürgschaft), nicht bar.',
+  };
+
+  function zeigeErgebnis(r, basis, behalteSzenario) {
+    const alteKarte = behalteSzenario ? $('#szenarioKarte') : null;
     const out = $('#ergebnis');
     const mini = $('#minibar');
     if (!r.ok) {
@@ -799,7 +857,14 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
       </div>`;
     }).join('');
 
-    const zeile = (label, wert, main) => `<tr${main ? ' class="main"' : ''}><th scope="row">${esc(label)}</th><td>${esc(wert)}</td></tr>`;
+    let infoNr = 0;
+    const zeile = (label, wert, main) => {
+      const erkl = ERKLAERUNG[label];
+      const id = erkl ? `info-${++infoNr}` : '';
+      const knopf = erkl ? ` <button type="button" class="info" data-info="${id}" aria-expanded="false" aria-controls="${id}" aria-label="Erklärung zu ${esc(label)}">i</button>` : '';
+      return `<tr${main ? ' class="main"' : ''}><th scope="row">${esc(label)}${knopf}</th><td>${esc(wert)}</td></tr>`
+        + (erkl ? `<tr class="erkl" id="${id}" hidden><td colspan="2">${esc(erkl)}</td></tr>` : '');
+    };
     const zvZeilen = () => (!st.zv ? [] : [
       zeile('Verkehrswert laut Gutachten', zahl(k.verkehrswert) ? C.fmtEuro(k.verkehrswert) : '– (nicht eingetragen)'),
       zeile('Gebot / Verkehrswert', zahl(k.gebotZuVerkehrswert) ? C.fmtProzent(k.gebotZuVerkehrswert, 0) : '–'),
@@ -812,7 +877,9 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
         zeile('Gewinn vor Steuern', C.fmtEuro(k.gewinnVorSteuern)),
         zeile('Steuer (privat)', C.fmtEuro(k.steuer)),
         zeile('Gewinn nach Steuern', C.fmtEuro(k.gewinnNachSteuern), true),
+        zeile('Monatliche Belastung', C.fmtEuro((k.darlehen * r.werte.zins) / 12 + r.werte.haltekosten)),
         zeile('Verkaufserlös', C.fmtEuro(k.verkaufserloes)),
+        zeile('Verkaufspreis je m²', C.fmtEuro(k.verkaufspreisQm)),
         zeile('Gesamtkosten', C.fmtEuro(k.gesamtkosten)),
         zeile('davon Kaufnebenkosten', C.fmtEuro(k.kaufnebenkosten)),
         zeile('davon Sanierung inkl. Puffer', C.fmtEuro(k.sanierungGesamt)),
@@ -833,6 +900,9 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
       tabelle = [
         zeile('Cashflow nach Steuern / Monat', C.fmtEuroVz(k.cashflowNachSteuernMonat), true),
         zeile('Cashflow vor Steuern / Monat', C.fmtEuroVz(k.cashflowVorSteuernMonat)),
+        zeile('Monatliche Belastung', C.fmtEuro((k.kapitaldienst + k.nichtUmlagefaehigJahr + k.ruecklageJahr) / 12)),
+        zeile('davon Kreditrate (Zins + Tilgung)', C.fmtEuro(k.kapitaldienst / 12)),
+        zeile('Mieteinnahmen / Monat (nach Leerstand)', C.fmtEuro(k.mieteEffektiv / 12)),
         zeile('Kaufpreisfaktor', zahl(k.kaufpreisfaktor) ? C.fmtZahl(k.kaufpreisfaktor, 1) : '–'),
         zeile('Bruttomietrendite', C.fmtProzent(k.bruttomietrendite, 2)),
         zeile('Nettomietrendite', C.fmtProzent(k.nettomietrendite, 2)),
@@ -862,19 +932,14 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
         <div class="delta">${d >= 0 ? '+' : ''}${C.fmtEuro(d)} (${d >= 0 ? '+' : ''}${C.fmtProzent(d / angebot)}) zum ${st.zv ? 'Gebot' : 'Angebot'}</div></div>`;
     };
 
-    const hauptBasis = flip ? basis.verkaufspreisQm : basis.mieteIst;
+    const hauptBasis = flip ? basis.verkaufspreis : basis.mieteIst;
     const sk = szenario || {};
     const kpWert = zahl(sk.kaufpreis) ? sk.kaufpreis : angebot;
     const hauptWert = zahl(sk.haupt) ? sk.haupt : hauptBasis;
     const zinsWert = zahl(sk.zins) ? sk.zins : r.werte.zins;
     const zinsBasis = C.mitStandardwerten(basis, r.modus).werte.zins;
     const aktiv = (zahl(sk.kaufpreis) && sk.kaufpreis !== angebot) || (zahl(sk.haupt) && sk.haupt !== hauptBasis) || (zahl(sk.zins) && Math.abs(sk.zins - zinsBasis) > 1e-9);
-    const kpStep = angebot >= 200000 ? 1000 : 500;
-    const pct = (v, lo, hi) => `${(hi > lo ? Math.min(100, Math.max(0, ((v - lo) / (hi - lo)) * 100)) : 50).toFixed(1)}%`;
-    const hauptLabel = flip ? 'Verkaufspreis je m²' : 'Nettokaltmiete / Monat';
-    const hauptStep = flip ? 10 : 10;
-    const hauptMin = Math.max(0, Math.floor(hauptBasis * 0.6 / hauptStep) * hauptStep);
-    const hauptMax = Math.max(hauptStep * 10, Math.ceil(hauptBasis * 1.4 / hauptStep) * hauptStep);
+    reglerCfg = baueRegler(flip, angebot, kpWert, hauptBasis, hauptWert, zinsWert);
 
     const annahmen = r.annahmen.filter((a) => LABEL_KURZ[a] && (FELD[a] ? sichtbar(FELD[a]) : true));
     const annahmeText = annahmen.map((a) => {
@@ -904,26 +969,16 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
         <h2 id="h-gebot">${st.zv ? 'Bietgrenze' : 'Maximalgebot'}</h2>
         <div class="gebot">
           ${gebotKarte(r.maximalgebot.zielText, r.maximalgebot.ziel)}
-          ${gebotKarte('für Grün (Score ≥ 70)', r.maximalgebot.gruen)}
+          ${gebotKarte(`für Grün (Score ≥ ${C.AMPEL_GRUEN})`, r.maximalgebot.gruen)}
         </div>
         <p class="hint" style="margin-top:0">${st.zv ? 'Geplantes Gebot' : 'Angebotspreis'} ${C.fmtEuro(angebot)}. Abgerundet auf 100 €.${aktiv ? ' Mit den Werten aus dem Szenario gerechnet.' : ''}</p>
       </section>
 
-      <section class="card" aria-labelledby="h-szen">
+      <section class="card" aria-labelledby="h-szen" id="szenarioKarte">
         <h2 id="h-szen">Szenario</h2>
-        ${aktiv ? `<div class="szenario-hint"><span>Regler weichen von der Eingabe ab.</span><span><button class="btn small" type="button" id="szenUebernehmen">Übernehmen</button> <button class="btn small" type="button" id="szenReset">Zurücksetzen</button></span></div>` : ''}
-        <div class="slider">
-          <label for="sl-kp">Kaufpreis <output id="o-kp">${C.fmtEuro(kpWert)}</output></label>
-          <input type="range" id="sl-kp" data-sl="kaufpreis" min="${Math.floor(angebot * 0.6 / kpStep) * kpStep}" max="${Math.ceil(angebot * 1.2 / kpStep) * kpStep}" step="${kpStep}" value="${kpWert}" style="--p:${pct(kpWert, Math.floor(angebot * 0.6 / kpStep) * kpStep, Math.ceil(angebot * 1.2 / kpStep) * kpStep)}">
-        </div>
-        <div class="slider">
-          <label for="sl-haupt">${esc(hauptLabel)} <output id="o-haupt">${C.fmtEuro(hauptWert)}</output></label>
-          <input type="range" id="sl-haupt" data-sl="haupt" min="${hauptMin}" max="${hauptMax}" step="${hauptStep}" value="${hauptWert}" style="--p:${pct(hauptWert, hauptMin, hauptMax)}">
-        </div>
-        <div class="slider">
-          <label for="sl-zins">Sollzins <output id="o-zins">${C.fmtProzent(zinsWert, 2)}</output></label>
-          <input type="range" id="sl-zins" data-sl="zins" min="0" max="0.1" step="0.0005" value="${zinsWert}" style="--p:${pct(zinsWert, 0, 0.1)}">
-        </div>
+        <div class="szenario-hint" id="szenHint" ${aktiv ? '' : 'hidden'}><span>Werte weichen von der Eingabe ab.</span><span><button class="btn small" type="button" id="szenUebernehmen">Übernehmen</button> <button class="btn small" type="button" id="szenReset">Zurücksetzen</button></span></div>
+        ${reglerCfg.map(reglerHtml).join('')}
+        <p class="hint">Regler ziehen, mit − / + fein verstellen oder den Wert direkt eintippen.</p>
       </section>
 
       <section class="card" aria-labelledby="h-kz">
@@ -943,6 +998,55 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
         </div>
         <p class="footer-note">Modellrechnung, keine Steuer-, Rechts- oder Finanzberatung.</p>
       </section>`;
+    if (alteKarte) {
+      $('#szenarioKarte').replaceWith(alteKarte);
+      $('#szenHint').hidden = !aktiv;
+      for (const c of reglerCfg) {
+        const feld = document.getElementById('in-' + c.key);
+        if (feld && document.activeElement !== feld) feld.value = c.fmt(c.wert);
+        const sl = document.getElementById('sl-' + c.key);
+        if (sl) sl.style.setProperty('--p', reglerProzent(c));
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Szenario-Regler
+  // -------------------------------------------------------------------------
+  let reglerCfg = [];
+  const rundeAuf = (v, step) => Math.round(v / step) * step;
+  function baueRegler(flip, angebot, kp, hauptBasis, haupt, zins) {
+    const bereich = (basis, wert, step, lo, hi) => ({
+      min: Math.max(0, Math.min(Math.floor((basis * lo) / step) * step, wert)),
+      max: Math.max(Math.ceil((basis * hi) / step) * step, wert, step * 10),
+    });
+    const euro = { fmt: (v) => C.fmtZahl(v, v % 1 === 0 ? 0 : 2), parse: (t) => C.parseZahl(t) };
+    const kpKnopf = angebot >= 200000 ? 1000 : 500;
+    return [
+      Object.assign({ key: 'kaufpreis', label: st.zv ? 'Gebot' : 'Kaufpreis', einheit: '€', wert: kp, step: 100, knopf: kpKnopf }, bereich(angebot, kp, 100, 0.5, 1.3), euro),
+      flip
+        ? Object.assign({ key: 'haupt', label: 'Verkaufspreis', einheit: '€', wert: haupt, step: 100, knopf: 1000 }, bereich(hauptBasis, haupt, 100, 0.6, 1.4), euro)
+        : Object.assign({ key: 'haupt', label: 'Nettokaltmiete', einheit: '€/Monat', wert: haupt, step: 1, knopf: 5 }, bereich(hauptBasis, haupt, 1, 0.5, 1.5), euro),
+      {
+        key: 'zins', label: 'Sollzins', einheit: '%', wert: zins, step: 0.0001, knopf: 0.0005, min: 0, max: Math.max(0.1, zins),
+        fmt: (v) => C.fmtZahl(v * 100, 2), parse: (t) => { const n = C.parseZahl(t); return n === null ? null : n / 100; },
+      },
+    ];
+  }
+  const reglerProzent = (c) => `${(c.max > c.min ? Math.min(100, Math.max(0, ((c.wert - c.min) / (c.max - c.min)) * 100)) : 50).toFixed(1)}%`;
+  function reglerHtml(c) {
+    const knopfText = c.key === 'zins' ? C.fmtZahl(c.knopf * 100, 2) + ' %' : C.fmtZahl(c.knopf, 0) + ' €';
+    return `<div class="slider">
+      <div class="slkopf">
+        <label for="in-${c.key}">${esc(c.label)}</label>
+        <div class="slctl">
+          <button type="button" class="stepbtn" data-schritt="${c.key}" data-dir="-1" aria-label="${esc(c.label)} um ${knopfText} senken">−</button>
+          <div class="inputrow slin"><input id="in-${c.key}" data-slin="${c.key}" type="text" inputmode="decimal" enterkeyhint="done" value="${esc(c.fmt(c.wert))}"><span class="unit">${esc(c.einheit)}</span></div>
+          <button type="button" class="stepbtn" data-schritt="${c.key}" data-dir="1" aria-label="${esc(c.label)} um ${knopfText} erhöhen">+</button>
+        </div>
+      </div>
+      <input type="range" id="sl-${c.key}" data-sl="${c.key}" aria-label="${esc(c.label)} Regler" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.wert}" style="--p:${reglerProzent(c)}">
+    </div>`;
   }
 
   const AKTION_SYMBOL = { pruefen: '●', verhandeln: '▲', verwerfen: '■' };
@@ -1036,7 +1140,7 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
         if (t.value.trim() === '') st.eigene = st.eigene.filter((x) => x !== f.id);
         else if (!istEigen(f.id)) st.eigene.push(f.id);
       }
-      if (['kaufpreis', 'mieteIst', 'verkaufspreisQm', 'zins'].includes(f.id)) szenario = null;
+      if (['kaufpreis', 'mieteIst', 'verkaufspreis', 'zins'].includes(f.id)) szenario = null;
       aktualisiere();
     } else if (t.id === 'zvToggle') {
       st.zv = t.checked;
@@ -1104,19 +1208,48 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
     const t = ev.target;
     if (t.id === 'notiz') { st.notiz = t.value; speichereEntwurf(); return; }
     if (!t.dataset.sl) return;
-    szenario = Object.assign({}, szenario, { [t.dataset.sl]: Number(t.value) });
+    setzeSzenario(t.dataset.sl, Number(t.value), true);
+  });
+  erg.addEventListener('change', (ev) => {
+    const t = ev.target;
+    if (!t.dataset.slin) return;
+    const c = reglerCfg.find((x) => x.key === t.dataset.slin);
+    const v = c && c.parse(t.value);
+    if (v === null || v === undefined || !(v >= 0)) { t.value = c ? c.fmt(c.wert) : ''; toast('Bitte eine gültige Zahl eingeben.'); return; }
+    setzeSzenario(c.key, v, false);
+  });
+  erg.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter' && ev.target.dataset && ev.target.dataset.slin) { ev.preventDefault(); ev.target.blur(); }
+  });
+
+  /** Szenario-Wert setzen und neu rechnen; beim Ziehen bleibt die Regler-Karte stehen. */
+  function setzeSzenario(key, wert, ziehen) {
+    szenario = Object.assign({}, szenario, { [key]: wert });
     const r = C.berechne(eingabe(true), st.modus);
     if (!r.ok) return;
     letztesErgebnis = r;
-    // Nur Ergebnis neu zeichnen, Fokus auf dem Regler halten
-    const id = t.id;
-    zeigeErgebnis(r, eingabe(false));
-    const neu = document.getElementById(id);
-    if (neu) neu.focus({ preventScroll: true });
+    zeigeErgebnis(r, eingabe(false), ziehen);
     zeigeStandardwerte(standardWerte(eingabe(false)));
-  });
+  }
   erg.addEventListener('click', (ev) => {
     const id = ev.target.id;
+    const info = ev.target.closest('[data-info]');
+    if (info) {
+      const zeileErkl = document.getElementById(info.dataset.info);
+      zeileErkl.hidden = !zeileErkl.hidden;
+      info.setAttribute('aria-expanded', String(!zeileErkl.hidden));
+      return;
+    }
+    const schritt = ev.target.closest('[data-schritt]');
+    if (schritt) {
+      const c = reglerCfg.find((x) => x.key === schritt.dataset.schritt);
+      if (!c) return;
+      const neu = Math.max(0, Math.round((c.wert + Number(schritt.dataset.dir) * c.knopf) / c.step) * c.step);
+      setzeSzenario(c.key, Number(neu.toFixed(6)), false);
+      const knopf = document.querySelector(`[data-schritt="${c.key}"][data-dir="${schritt.dataset.dir}"]`);
+      if (knopf) knopf.focus({ preventScroll: true });
+      return;
+    }
     if (id === 'szenReset') { szenario = null; aktualisiere(); }
     else if (id === 'szenUebernehmen') uebernehmeSzenario();
     else if (id === 'btnSpeichern') speichern();
@@ -1134,7 +1267,7 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
       if (el) el.value = st.felder[fid];
     };
     if (zahl(szenario.kaufpreis)) setze('kaufpreis', szenario.kaufpreis);
-    if (zahl(szenario.haupt)) setze(st.modus === 'flip' ? 'verkaufspreisQm' : 'mieteIst', szenario.haupt);
+    if (zahl(szenario.haupt)) setze(st.modus === 'flip' ? 'verkaufspreis' : 'mieteIst', szenario.haupt);
     if (zahl(szenario.zins)) setze('zins', szenario.zins);
     szenario = null;
     aktualisiere();
@@ -1170,9 +1303,23 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
     if (abgleichen) planeAbgleich();
     return ok;
   }
-  const marktTreffer = () => D.findeMarktdaten(bestand.marktdaten, {
-    stadt: st.geo && st.geo.stadt, stadtteil: st.geo && st.geo.stadtteil, text: st.felder.ort,
+  const lageAktuell = () => ({
+    stadt: st.geo && st.geo.stadt, stadtteil: st.geo && st.geo.stadtteil, kreis: st.geo && st.geo.kreis, text: st.felder.ort,
+    objektart: st.objektart, baujahr: C.parseZahl(st.felder.baujahr || ''),
   });
+  /** Eigene Marktdaten zuerst, dann die fest hinterlegten amtlichen Werte. */
+  const marktTreffer = (feld) => D.findeMarktdaten(bestand.marktdaten, lageAktuell(), feld)
+    || D.findeMarktdaten(D.REFERENZ_MARKTDATEN, lageAktuell(), feld);
+  /** Mietspiegel gilt je Wohnung: nur bei ETW; Feld „Wohnlage“ erst nach erkannter Adresse (kein Neuaufbau beim Tippen). */
+  function mietspiegelSichtbar() { return st.objektart === 'ETW' && !!st.geo && D.hatMietspiegel({ stadt: st.geo.stadt }); }
+  function mietspiegelWert() {
+    if (st.objektart !== 'ETW') return null;
+    return D.mietspiegelMiete(lageAktuell(), {
+      wohnflaeche: C.parseZahl(st.felder.wohnflaeche || '') ?? undefined,
+      baujahr: C.parseZahl(st.felder.baujahr || '') ?? undefined,
+      wohnlage: st.felder.wohnlage || '',
+    });
+  }
 
   function speichern() {
     const r = letztesErgebnis;
@@ -1210,7 +1357,7 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
   // -------------------------------------------------------------------------
   // Adresse → Bundesland (OpenStreetMap Nominatim, nur auf Nutzeraktion, mit Cache)
   // -------------------------------------------------------------------------
-  const GEO_CACHE = 'immoQuickCheck.geocache.v1';
+  const GEO_CACHE = 'immoQuickCheck.geocache.v2'; // v2: mit Landkreis
   let geoLaeuft = false;
   let letzteGeoAnfrage = 0;
   async function ermittleLage() {
@@ -1237,6 +1384,7 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
           stadt: a.city || a.town || a.village || a.municipality || '',
           stadtteil: a.suburb || a.city_district || a.quarter || '',
           plz: a.postcode || '',
+          kreis: a.county || '',
         };
         cache[key] = geo;
         const keys = Object.keys(cache);
@@ -1317,8 +1465,11 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
   function zeigeMarktdaten() {
     const el = $('#marktInhalt');
     const liste = bestand.marktdaten;
-    if (!liste.length) { el.innerHTML = '<p class="empty">Noch keine Marktdaten erfasst.</p>'; return; }
-    el.innerHTML = liste.map((m) => `<div class="obj">
+    const ref = `<p class="hint" style="margin:14px 2px 4px"><b>Fest hinterlegt (amtlich):</b> ${esc(D.MIETSPIEGEL_HALLE.quelle)} (Vergleichsmiete für ETW aus Fläche, Baujahr und Wohnlage); `
+      + D.REFERENZ_MARKTDATEN.map((m) => `${m.ort}: ${m.notiz} ${C.fmtZahl(m.kaufpreisQm, 0)} €/m²`).map(esc).join('; ')
+      + `. Quelle: ${esc(D.REFERENZ_MARKTDATEN[0].quelle)}. Eigene Einträge haben Vorrang.</p>`;
+    if (!liste.length) { el.innerHTML = '<p class="empty">Noch keine eigenen Marktdaten erfasst.</p>' + ref; return; }
+    el.innerHTML = ref + liste.map((m) => `<div class="obj">
         <button class="open" type="button" data-markt-edit="${esc(m.id)}">
           <span class="t">${esc(m.ort)}${m.stadtteil ? ' · ' + esc(m.stadtteil) : ''}</span>
           <span class="m">Miete ${zahl(m.mieteQm) ? C.fmtZahl(m.mieteQm, 2) + ' €/m²' : '–'} · Kauf ${zahl(m.kaufpreisQm) ? C.fmtZahl(m.kaufpreisQm, 0) + ' €/m²' : '–'}</span>
@@ -1577,6 +1728,13 @@ dialog#liste::backdrop { background: rgba(0,0,0,.45); -webkit-backdrop-filter: b
   function laden(obj) {
     const felder = Object.assign({ bundesland: 'Sachsen-Anhalt' }, obj.felder);
     if (!C.GRUNDERWERBSTEUER[felder.bundesland]) felder.bundesland = 'Sachsen-Anhalt';
+    // Früheres Format: Verkaufspreis je m² → Gesamtpreis
+    if (felder.verkaufspreisQm && !felder.verkaufspreis) {
+      const qm = C.parseZahl(felder.verkaufspreisQm);
+      const wf = C.parseZahl(felder.wohnflaeche || '');
+      if (qm !== null && wf !== null) felder.verkaufspreis = C.fmtZahl(qm * wf, 0);
+    }
+    delete felder.verkaufspreisQm;
     st = Object.assign(LEER(), {
       id: obj.id || null,
       modus: ['flip', 'empfehlung'].includes(obj.modus) ? obj.modus : 'vermietung',

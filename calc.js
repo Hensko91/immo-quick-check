@@ -69,7 +69,7 @@
     makler: 0.0357,
     zins: 0.05,
     tilgung: 0.012,
-    steuersatz: 0.35,
+    steuersatz: 0.32, // geändert am 03.10.2026 (vorher 35 %)
     // Vermietung
     objektart: 'ETW',
     anteilNichtUmlagefaehig: 0.35,
@@ -94,8 +94,9 @@
     },
   };
 
-  const AMPEL_GRUEN = 70;
-  const AMPEL_GELB = 50;
+  // Kalibrierung 03.10.2026: strenger als im Konzept (dort 70 / 50)
+  const AMPEL_GRUEN = 75;
+  const AMPEL_GELB = 55;
 
   // ---------------------------------------------------------------------------
   // Hilfsfunktionen
@@ -282,7 +283,7 @@
 
     if (modus === 'flip') {
       pflicht('sanierung', 'die Sanierungskosten');
-      pflicht('verkaufspreisQm', 'den erwarteten Verkaufspreis je m²', { groesserNull: true });
+      pflicht('verkaufspreis', 'den erwarteten Verkaufspreis', { groesserNull: true });
       bereich('sanierungspuffer', 'Sanierungspuffer', 0, 2);
       if (zahl(w.haltedauer) && (w.haltedauer <= 0 || w.haltedauer > 120)) f('haltedauer', 'Haltedauer muss zwischen 1 und 120 Monaten liegen.');
       if (zahl(w.haltekosten) && w.haltekosten < 0) f('haltekosten', 'Haltekosten dürfen nicht negativ sein.');
@@ -392,7 +393,7 @@
     const eigenkapitalEingesetzt = finanzierungsbedarf - darlehen;
     const finanzierungskosten = (darlehen * w.zins * w.haltedauer) / 12;
     const haltekostenGesamt = w.haltekosten * w.haltedauer;
-    const verkaufserloes = w.verkaufspreisQm * w.wohnflaeche;
+    const verkaufserloes = w.verkaufspreis;
     const verkaufskosten = verkaufserloes * w.verkaufskosten;
     const kostenOhneVerkauf = kaufpreis + kaufnebenkosten + sanierungGesamt + finanzierungskosten + haltekostenGesamt;
     const gesamtkosten = kostenOhneVerkauf + verkaufskosten;
@@ -421,7 +422,7 @@
   function kennzahlenFlip(w) {
     const b = flipBasis(w);
     const stress = flipBasis(Object.assign({}, w, {
-      verkaufspreisQm: w.verkaufspreisQm * 0.9,
+      verkaufspreis: w.verkaufspreis * 0.9,
       sanierung: w.sanierung * 1.2,
       haltedauer: w.haltedauer + 3,
     }));
@@ -436,6 +437,7 @@
       stress,
       faustregel70: b.verkaufserloes * 0.7 - b.sanierungGesamt,
       kaufpreisQm: teile(w.kaufpreis, w.wohnflaeche),
+      verkaufspreisQm: teile(w.verkaufspreis, w.wohnflaeche),
       gewerblicherHandelHinweis: zahl(w.verkaeufe5J) && w.verkaeufe5J >= 3,
     });
   }
@@ -462,7 +464,7 @@
 
   /**
    * Gesamtscore aus Kriterien und K.-o.-Regeln.
-   * K.-o. „Rot“ begrenzt die Punktzahl auf 49, „begrenzt auf Gelb“ auf 69.
+   * K.-o. „Rot“ begrenzt die Punktzahl auf AMPEL_GELB − 1, „begrenzt auf Gelb“ auf AMPEL_GRUEN − 1.
    */
   function gesamtScore(kriterien, ko) {
     const roh = kriterien.reduce((s, k) => s + k.punkte, 0);
@@ -596,7 +598,7 @@
       ekr = kz.gewinnNachSteuern > 0 ? Infinity : -Infinity;
       ekHinweis = 'Ohne Eigenkapital ist die Rendite nicht definiert; volle Punkte nur bei Gewinn.';
     }
-    k('ekRendite', 'Eigenkapitalrendite p. a.', 15, punkte(ekr, 0.1, 0.4, 15),
+    k('ekRendite', 'Eigenkapitalrendite p. a.', 15, punkte(ekr, 0.2, 1.0, 15),
       zahl(ekr) ? fmtProzent(ekr) : 'kein Eigenkapital', `EK-Rendite ${zahl(ekr) ? fmtProzent(ekr) : '–'}`, ekHinweis);
 
     k('preispuffer', 'Preispuffer', 15, punkte(kz.preispuffer, 0.05, 0.15, 15),
